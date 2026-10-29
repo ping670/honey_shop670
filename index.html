@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Южен Пчелин | 100% Натурален Мед &amp; Пчелни Продукти от Южна България</title>
+  <meta name="description" content="Пчелен мед от пасищата на Тракия, Родопите и Странджа. Странджански манов мед, Акация, Букет и Пчелен прашец с директна експресна доставка за цяла Южна България.">
+  <meta name="keywords" content="пчелен мед, южна българия, пловдив мед, странджански манов мед, акациев мед, родопски мед, пчелин, продажба на мед">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍯</text></svg>">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Marck+Script&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Scroll Transitions & Visual Effects -->
+  <link rel="stylesheet" href="scroll-effects.css">
+</head>
+<body class="dark-theme">
+
+  <!-- Fullscreen Splash Intro Cover Curtain (Available on Demand) -->
+  <div class="splash-curtain" id="splash-curtain">
+    <div class="splash-bg" style="background-image: url('./images/splash.png');"></div>
+    <div class="splash-overlay"></div>
+    
+    <!-- Animated pollen particles canvas -->
+    <canvas id="splash-particles-canvas" class="splash-canvas"></canvas>
+
+    <div class="splash-content text-center">
+      <div class="splash-logo-badge">
+        <h1 class="splash-brand-title">
+          <span class="brand-title-first">ЮЖЕН</span>
+          <span class="brand-title-last">ПЧЕЛИН</span>
+        </h1>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Header / Navbar -->
+  <header class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="#" class="brand-logo" onclick="window.reopenSplash(); return false;">
+        <div class="logo-icon">
+          <img src="images/logo.jpg" alt="Южен Пчелин" class="logo-img">
+        </div>
+        <div class="logo-text">
+          <span class="brand-name">ЮЖЕН ПЧЕЛИН</span>
+          <span class="brand-tagline">ТРАКИЯ • РОДОПИ • СТРАНДЖА</span>
+        </div>
+      </a>
+
+      <nav class="nav-links" id="nav-links">
+        <a href="#hero">Начало</a>
+        <a href="#quiz">Намери Мед</a>
+        <a href="#products">Продукти</a>
+        <a href="#reviews">Отзиви</a>
+        <a href="tel:+359888123456" class="mobile-only-call-btn">
+          📞 0888 123 456 (Поръчай по Телефон)
+        </a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="cart-btn" id="open-cart-btn" aria-label="Количка">
+          <i data-lucide="shopping-bag"></i>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </button>
+
+        <a href="tel:+359888123456" class="btn btn-outline nav-call-btn">
+          <i data-lucide="phone"></i>
+          <span>Бърза Поръчка</span>
+        </a>
+
+        <button class="mobile-menu-btn" id="mobile-menu-btn">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section — Title with Craft Texts & Images Included -->
+  <section class="hero-luxury" id="hero">
+    <div class="hero-bg-art" aria-hidden="true">
+      <div class="hero-bg-image"></div>
+      <div class="hero-bg-overlay"></div>
+    </div>
+
+    <!-- Background Atmospheric Glows -->
+    <div class="luxury-bg-glow glow-center"></div>
+    <div class="luxury-bg-glow glow-bottom-left"></div>
+    <div class="luxury-bg-glow glow-bottom-right"></div>
+    <div class="spotlight-ambient-glow glow-top"></div>
+    <div class="spotlight-ambient-glow glow-bottom"></div>
+
+    <div class="container-luxury" style="position: relative; z-index: 2;">
+      <!-- Hero Main Title -->
+      <div class="hero-title-center" style="margin-bottom: 55px;">
+        <span class="script-subtitle">вашият фаворит</span>
+
+        <h1 class="editorial-headline">
+          Наслади се<br>
+          със Златен<br>
+          <span class="headline-with-icon">
+            Блясък
+            <span class="headline-spark-badge">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z"/>
+              </svg>
+            </span>
+          </span>
+        </h1>
+      </div>
+
+      <!-- Top Poetic Headline Banner (From former Craft Section) -->
+      <div class="spotlight-top-banner">
+        
+        <div class="spotlight-float-card float-card-left">
+          <div class="seal-icon-mini">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div class="float-card-content">
+            <span class="float-card-title">Ръчно дозиран пчелен мед</span>
+            <span class="float-card-sub">вдъхновен от дивата природа</span>
+            <a href="#products" class="float-card-link">Вижте продуктите →</a>
+          </div>
+        </div>
+
+        <div class="spotlight-center-quote">
+          <p class="delicate-poetic-quote">
+            Най-чистата светлина, най-богатият аромат, <br>
+            <span class="quote-script-accent">най-уютните моменти ви очакват</span>
+          </p>
+        </div>
+
+        <div class="spotlight-float-card float-card-right">
+          <div class="float-preview-thumbs">
+            <img src="./images/manov.jpg" alt="Буркан мед" class="mini-cluster-jar">
+            <img src="./images/rhodope.jpg" alt="Буркан мед" class="mini-cluster-jar offset-jar">
+          </div>
+          <div class="float-card-content">
+            <span class="float-card-title">Стопяващи се вкусове</span>
+            <span class="float-card-sub">капка по капка чиста наслада</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Main Showcase: Craft Text & Imagery -->
+      <div class="spotlight-main-grid">
+        
+        <!-- Left Column: Editorial Typography & Text -->
+        <div class="spotlight-left-column">
+          <div class="floating-honey-candle">
+            <div class="candle-glow-aura"></div>
+            <img src="./images/hero.png" alt="Медено сияние" class="mini-floating-candle-img">
+          </div>
+
+          <h2 class="spotlight-editorial-title">
+            Създай<br>
+            Магията<br>
+            <span class="editorial-script-emphasis">с Всяко Сияние</span>
+          </h2>
+
+          <p class="spotlight-editorial-sub">
+            Потопете се в богатството на нашата селектирана медена симфония. Добит с почит към пчелите и природата.
+          </p>
+
+          <a href="#products" class="btn btn-outline-gold btn-delicate">
+            <span>Разгледай Селекцията</span>
+            <i data-lucide="sparkles"></i>
+          </a>
+        </div>
+
+        <!-- Center Column: Glowing Glass Container & Honey Image -->
+        <div class="spotlight-center-column">
+          <div class="glass-glow-cube">
+            <div class="cube-internal-glow"></div>
+            <div class="cube-core-flame"></div>
+            <img src="./images/hero.png" alt="Златен пчелен мед в кристален съд" class="cube-main-honey-img">
+            <div class="cube-reflection-plate"></div>
+          </div>
+        </div>
+
+        <!-- Right Column: Beekeeper Photo & Craft Arch Card -->
+        <div class="spotlight-right-column">
+          
+          <div class="spotlight-step-badge">
+            <div class="step-badge-icon">🍯</div>
+            <div class="step-badge-text">
+              <span class="step-badge-sub">Влезте в света на</span>
+              <span class="step-badge-title">Изящния Натурален Мед</span>
+            </div>
+          </div>
+
+          <!-- Beekeeper Craft Sunset Arch -->
+          <div class="craft-arch-card">
+            <div class="craft-arch-inner">
+              <div class="craft-warm-gradient"></div>
+              <div class="craft-arch-badge">🐝 Пчеларство от 1978</div>
+              <div class="craft-artisan-photo">
+                <img src="./images/splash.png" alt="Пчеларят на залез" class="artisan-img">
+              </div>
+              <div class="craft-artisan-caption">
+                <h4>Димитър Стоянов</h4>
+                <p>Майстор-пчелар • с. Смилян, Родопите</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+
+
+  <!-- Honey Quiz Section ("Намери своя мед") -->
+  <section class="quiz-section" id="quiz">
+    <div class="container">
+      <div class="quiz-card card-glass">
+        <div class="quiz-header">
+          <div class="badge-tag"><i data-lucide="help-circle"></i> Интерактивен Съветник</div>
+          <h2>Намери идеалния пчелен мед за теб</h2>
+          <p>Отговорете на 2 бързи въпроса и нашият пчеларски съветник ще ви препоръча най-подходящия продукт.</p>
+        </div>
+
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" id="quiz-progress-fill" style="width: 50%;"></div>
+        </div>
+
+        <div class="quiz-body" id="quiz-body">
+          <!-- Dynamically populated quiz step -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Catalog Section -->
+  <section class="products-section" id="products">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="sub-heading">Автентична реколта 2026</span>
+        <h2 class="section-title">Каталог Продукти от "Южен Пчелин"</h2>
+      </div>
+
+      <!-- Catalog Filters -->
+      <div class="catalog-filters" id="catalog-filters">
+        <button class="filter-btn active" data-filter="all">Всички Продукти</button>
+        <button class="filter-btn" data-filter="acacia">Акациев Мед</button>
+        <button class="filter-btn" data-filter="manov">Манов Мед (ЗНП)</button>
+        <button class="filter-btn" data-filter="rhodope">Родопски Букет</button>
+        <button class="filter-btn" data-filter="lavender">Лавандула &amp; Липа</button>
+        <button class="filter-btn" data-filter="products">Пчелен Прашец &amp; Прополис</button>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="products-grid" id="products-grid">
+        <!-- Dynamically injected product cards -->
+      </div>
+    </div>
+  </section>
+
+
+
+
+  <!-- Customer Reviews Section (Pure Black Background) -->
+  <section class="reviews-section" id="reviews">
+    <div class="container" style="position: relative; z-index: 2;">
+      <div class="section-header text-center">
+        <span class="sub-heading">Споделени впечатления</span>
+        <h2 class="section-title">Отзиви от Нашите Клиенти</h2>
+        <p class="section-subtitle-reviews" style="max-width:620px; margin:12px auto 0; color:var(--text-soft); font-size:0.95rem; line-height:1.5;">
+          Споделете вашето мнение за нашия мед и обслужване. Всички коментари се публикуват директно от реални потребители!
+        </p>
+      </div>
+
+      <!-- Add Review Form -->
+      <div class="review-form-wrapper" style="max-width: 680px; margin: 35px auto 40px;">
+        <div class="card-glass review-form-card" style="padding: 28px 30px; border-radius: 16px; border: 1px solid rgba(245, 158, 11, 0.22); box-shadow: 0 10px 30px rgba(0,0,0,0.35);">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 22px;">
+            <span style="font-size: 1.6rem;">✍️</span>
+            <div>
+              <h3 style="color: #FFF; font-size: 1.25rem; margin: 0; font-weight: 600;">Оставете Вашия Отзив</h3>
+              <p style="color: var(--text-muted); font-size: 0.85rem; margin: 3px 0 0;">Споделете какво опитахте и вашите впечатления от Южен Пчелин</p>
+            </div>
+          </div>
+
+          <form id="user-review-form" onsubmit="event.preventDefault(); window.handleUserReviewSubmit();">
+            <div class="form-row-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="review-author-name" style="display: block; font-size: 0.85rem; color: #E2D5C8; margin-bottom: 6px;">Вашето Име *</label>
+                <input type="text" id="review-author-name" class="form-control" placeholder="напр. Иван Петров" required>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="review-author-city" style="display: block; font-size: 0.85rem; color: #E2D5C8; margin-bottom: 6px;">Град / Населено място</label>
+                <input type="text" id="review-author-city" class="form-control" placeholder="напр. гр. Пловдив">
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 16px;">
+              <label style="display: block; font-size: 0.85rem; color: #E2D5C8; margin-bottom: 6px;">Вашата Оценка:</label>
+              <div class="star-rating-select" id="star-rating-select" style="display: flex; gap: 8px; font-size: 1.7rem; cursor: pointer; color: var(--primary-gold); line-height: 1;">
+                <span class="star-btn" data-rating="1" title="1 звезда">★</span>
+                <span class="star-btn" data-rating="2" title="2 звезди">★</span>
+                <span class="star-btn" data-rating="3" title="3 звезди">★</span>
+                <span class="star-btn" data-rating="4" title="4 звезди">★</span>
+                <span class="star-btn active" data-rating="5" title="5 звезди">★</span>
+              </div>
+              <input type="hidden" id="review-rating-value" value="5">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 22px;">
+              <label for="review-comment-text" style="display: block; font-size: 0.85rem; color: #E2D5C8; margin-bottom: 6px;">Вашият Коментар / Отзив *</label>
+              <textarea id="review-comment-text" class="form-control" rows="3" placeholder="Напишете вашия отзив (напр. вкус, доставка, качество)..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 20px; font-size: 0.95rem;">
+              <i data-lucide="send"></i>
+              <span>Публикувай Вашия Отзив</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- User Reviews Dynamic List -->
+      <div class="reviews-grid" id="reviews-grid">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Slide Cart Drawer -->
+  <div class="cart-drawer-overlay" id="cart-drawer-overlay"></div>
+  <aside class="cart-drawer" id="cart-drawer">
+    <div class="cart-drawer-header">
+      <h3><i data-lucide="shopping-bag"></i> Вашата Количка (<span id="cart-drawer-count">0</span>)</h3>
+      <button class="close-btn" id="close-cart-btn"><i data-lucide="x"></i></button>
+    </div>
+
+    <div class="cart-shipping-banner" id="cart-shipping-banner">
+      <!-- Shipping progress -->
+    </div>
+
+    <div class="cart-items-container" id="cart-items-container">
+      <!-- Dynamic cart items -->
+    </div>
+
+    <div class="cart-drawer-footer">
+      <div class="promo-code-box">
+        <input type="text" id="promo-input" placeholder="Промо код (напр. TRAKIA10)" class="form-control-sm">
+        <button class="btn btn-outline-sm" id="apply-promo-btn">Приложи</button>
+      </div>
+      <div id="promo-message" class="promo-msg"></div>
+
+      <div class="cart-summary-lines">
+        <div class="summary-line">
+          <span>Мед и продукти:</span>
+          <span id="cart-subtotal">0.00 €</span>
+        </div>
+        <div class="summary-line text-green" id="discount-row" style="display: none;">
+          <span>Отстъпка (10%):</span>
+          <span id="cart-discount">-0.00 €</span>
+        </div>
+        <div class="summary-line">
+          <span>Доставка (Южна БГ):</span>
+          <span id="cart-shipping">0.00 €</span>
+        </div>
+        <div class="summary-line total-line">
+          <span>Обща Сума:</span>
+          <span id="cart-total" class="text-gold">0.00 €</span>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-block btn-lg glow-effect" id="proceed-checkout-btn">
+        <i data-lucide="credit-card"></i> Премини към Поръчка
+      </button>
+    </div>
+  </aside>
+
+  <!-- Checkout Modal -->
+  <div class="modal-overlay" id="checkout-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i data-lucide="check-circle"></i> Завършване на Поръчката</h3>
+        <button class="close-btn" id="close-checkout-btn"><i data-lucide="x"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <form id="checkout-form" onsubmit="event.preventDefault(); window.handleCheckoutSubmit();">
+          <div class="checkout-grid">
+            <!-- Left Column: Customer details -->
+            <div class="checkout-col">
+              <h4>1. Данни за Купувача</h4>
+              <div class="form-group">
+                <label for="ck-name">Име и Фамилия *</label>
+                <input type="text" id="ck-name" class="form-control" required placeholder="Петър Георгиев">
+              </div>
+
+              <div class="form-group">
+                <label for="ck-phone">Телефон за потвърждение *</label>
+                <input type="tel" id="ck-phone" class="form-control" required placeholder="0888 123 456">
+              </div>
+
+              <div class="form-group">
+                <label for="ck-email">Имейл адрес (за разписка)</label>
+                <input type="email" id="ck-email" class="form-control" placeholder="petar@example.com">
+              </div>
+            </div>
+
+            <!-- Right Column: Shipping & Payment -->
+            <div class="checkout-col">
+              <h4>2. Доставка в Южна България</h4>
+              <div class="form-group">
+                <label for="ck-city">Град / Населено място *</label>
+                <select id="ck-city" class="form-control" required>
+                  <option value="Пловдив">гр. Пловдив (Безплатна лична доставка &gt; 25 €)</option>
+                  <option value="Стара Загора">гр. Стара Загора (Безплатна лична доставка &gt; 25 €)</option>
+                  <option value="Бургас">гр. Бургас (Безплатна лична доставка &gt; 25 €)</option>
+                  <option value="Смолян">гр. Смолян (Лична доставка от пчеларя)</option>
+                  <option value="Хасково">гр. Хасково (Лична доставка от пчеларя)</option>
+                  <option value="Пазарджик">гр. Пазарджик</option>
+                  <option value="Благоевград">гр. Благоевград</option>
+                  <option value="Кърджали">гр. Кърджали</option>
+                  <option value="Сливен">гр. Сливен</option>
+                  <option value="Ямбол">гр. Ямбол</option>
+                  <option value="Друго населено място">Друго населено място в Южна БГ</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="ck-address">Адрес за доставка или Офис на Еконт / Спиди *</label>
+                <input type="text" id="ck-address" class="form-control" required placeholder="напр. бул. България 45 или Офис Еконт Център">
+              </div>
+
+              <div class="form-group payment-methods-group">
+                <label style="display:flex; justify-content:space-between; align-items:center;">
+                  <span>Начин на Плащане *</span>
+                  <span style="font-size:0.75rem; color:var(--primary-gold);">100% Сигурно</span>
+                </label>
+                
+                <div class="payment-options-list">
+                  <!-- 1. Наложен платеж -->
+                  <div class="payment-option-card active" onclick="selectPaymentMethod('cod')">
+                    <div class="payment-option-header">
+                      <input type="radio" name="payment" id="pay-cod" value="cod" checked>
+                      <label for="pay-cod" class="payment-label">
+                        <span class="payment-icon">💵</span>
+                        <div class="payment-text">
+                          <strong>Наложен Платеж (в брой / с карта)</strong>
+                          <small>Плащате на куриера/пчеларя след преглед и дегустация</small>
+                        </div>
+                      </label>
+                      <span class="payment-badge">Препоръчан</span>
+                    </div>
+                  </div>
+
+                  <!-- 2. Банкова карта / Apple Pay / Google Pay -->
+                  <div class="payment-option-card" onclick="selectPaymentMethod('card')">
+                    <div class="payment-option-header">
+                      <input type="radio" name="payment" id="pay-card" value="card">
+                      <label for="pay-card" class="payment-label">
+                        <span class="payment-icon">💳</span>
+                        <div class="payment-text">
+                          <strong>Дебитна / Кредитна Карта</strong>
+                          <small>Visa, Mastercard, Apple Pay, Google Pay (0% такса)</small>
+                        </div>
+                      </label>
+                      <div class="card-logos-mini">
+                        <span class="card-tag">VISA</span>
+                        <span class="card-tag">MC</span>
+                      </div>
+                    </div>
+                    <div class="payment-extra-details" id="card-extra-details" style="display:none;">
+                      <div class="fake-card-input-box">
+                        <input type="text" placeholder="Номер на карта (•••• •••• •••• ••••)" class="form-control-sm" maxlength="19" id="card-dummy-num">
+                        <div style="display:flex; gap:10px; margin-top:8px;">
+                          <input type="text" placeholder="ММ/ГГ" class="form-control-sm" style="width:50%;" maxlength="5">
+                          <input type="password" placeholder="CVV" class="form-control-sm" style="width:50%;" maxlength="3">
+                        </div>
+                        <span style="font-size:0.75rem; color:var(--text-muted); display:block; margin-top:6px;">🔒 256-bit SSL криптирано сигурно плащане</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 3. Revolut Pay / Бърз превод -->
+                  <div class="payment-option-card" onclick="selectPaymentMethod('revolut')">
+                    <div class="payment-option-header">
+                      <input type="radio" name="payment" id="pay-revolut" value="revolut">
+                      <label for="pay-revolut" class="payment-label">
+                        <span class="payment-icon">⚡</span>
+                        <div class="payment-text">
+                          <strong>Revolut Pay / Бърз Превод</strong>
+                          <small>Моментален превод без такси директно през @revtag</small>
+                        </div>
+                      </label>
+                      <span class="payment-badge rev-badge">Моментално</span>
+                    </div>
+                    <div class="payment-extra-details" id="revolut-extra-details" style="display:none;">
+                      <div class="revolut-info-box">
+                        <span>📲 Изпратете сумата към Revtag: <strong class="text-gold">@pchelin.yug</strong></span>
+                        <small style="color:var(--text-muted); display:block; margin-top:4px;">В основание посочете вашия телефонен номер.</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 4. Банков превод по сметка (IBAN) -->
+                  <div class="payment-option-card" onclick="selectPaymentMethod('bank')">
+                    <div class="payment-option-header">
+                      <input type="radio" name="payment" id="pay-bank" value="bank">
+                      <label for="pay-bank" class="payment-label">
+                        <span class="payment-icon">🏦</span>
+                        <div class="payment-text">
+                          <strong>Банков Превод по Сметка (IBAN)</strong>
+                          <small>Идеален за фирми с фактура или поръчки на едро</small>
+                        </div>
+                      </label>
+                    </div>
+                    <div class="payment-extra-details" id="bank-extra-details" style="display:none;">
+                      <div class="bank-info-box">
+                        <p><strong>Банка:</strong> УниКредит Булбанк</p>
+                        <p><strong>IBAN:</strong> <code class="text-gold">BG88 UNCR 7000 1523 9841 02</code></p>
+                        <p><strong>Получател:</strong> Южен Пчелин ООД</p>
+                        <small style="color:var(--text-muted);">Поръчката се изпраща след постъпване на превода.</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-summary-box">
+            <div class="summary-line">
+              <span>Поръчани артикули:</span>
+              <strong id="ck-summary-count">0 бр.</strong>
+            </div>
+            <div class="summary-line">
+              <span>Избран метод на плащане:</span>
+              <strong id="ck-summary-payment" class="text-gold">Наложен платеж</strong>
+            </div>
+            <div class="summary-line total-line">
+              <span>Крайна Сума за плащане:</span>
+              <strong id="ck-summary-total" class="text-gold">0.00 €</strong>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg glow-effect">
+            <i data-lucide="check"></i> Потвърди &amp; Изпрати Поръчката
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Success Confirmation Modal -->
+  <div class="modal-overlay" id="success-modal">
+    <div class="modal-card text-center success-card">
+      <div class="success-icon-badge">🍯</div>
+      <h2>Поръчката ви беше приета успешно!</h2>
+      <p class="lead-text">Благодарим ви, че подкрепяте българското пчеларство в Южна България!</p>
+      
+      <div class="order-receipt-box">
+        <div class="receipt-row"><span>Номер на поръчка:</span> <strong id="receipt-order-id">#BG-HONEY-94821</strong></div>
+        <div class="receipt-row"><span>Град за доставка:</span> <strong id="receipt-city">Пловдив</strong></div>
+        <div class="receipt-row"><span>Метод на плащане:</span> <strong id="receipt-payment" class="text-gold">Наложен Платеж</strong></div>
+        <div class="receipt-row"><span>Обща Сума:</span> <strong id="receipt-total" class="text-gold">0.00 €</strong></div>
+      </div>
+
+      <p class="small-text">Наш пчелар ще се свърже с вас на посочения телефон в рамките на 1 час за потвърждение на доставката.</p>
+
+      <button class="btn btn-primary btn-lg" onclick="document.getElementById('success-modal').classList.remove('active')">
+        <i data-lucide="thumbs-up"></i> Отлично! Към Сайта
+      </button>
+    </div>
+  </div>
+
+  <!-- Certificate View Modal -->
+  <div class="modal-overlay" id="cert-modal">
+    <div class="modal-card cert-card">
+      <div class="modal-header">
+        <h3><i data-lucide="award"></i> Лабораторен Протокол за Анализ № BG-2026-889</h3>
+        <button class="close-btn" onclick="document.getElementById('cert-modal').classList.remove('active')"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="cert-document-preview">
+          <div class="cert-stamp">ОДОБРЕНО • БИО СЕРТИФИЦАТ</div>
+          <h4>Централна Акредитирана Пчеларска Лаборатория - Пловдив</h4>
+          <p>Проба: <strong>Странджански Манов Мед &amp; Тракийски Акациев Мед</strong></p>
+          <hr>
+          <div class="cert-rows">
+            <div class="cert-row"><span>Водно съдържание:</span> <strong>16.8% (Стандарт &lt; 20%)</strong></div>
+            <div class="cert-row"><span>Хидроксиметилфурфурол (HMF):</span> <strong>3.8 mg/kg (Стандарт &lt; 40)</strong></div>
+            <div class="cert-row"><span>Диастазна активност:</span> <strong>28.4 Готе единици</strong></div>
+            <div class="cert-row"><span>Захароза:</span> <strong>0.8% (Без добавена захар)</strong></div>
+            <div class="cert-row"><span>Антибиотици &amp; Пестициди:</span> <strong class="text-green">НЕ СЕ ОТКРИВАТ (0.00%)</strong></div>
+          </div>
+          <div class="cert-footer-sig">Главна Лабораторна Комисия: д-р пч. И. Колев</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW MODAL: Quick View Product Modal -->
+  <div class="modal-overlay" id="quickview-modal">
+    <div class="modal-card" style="max-width: 800px;">
+      <div class="modal-header">
+        <h3 id="qv-title">Детайли за Продукта</h3>
+        <button class="close-btn" onclick="document.getElementById('quickview-modal').classList.remove('active')"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body" id="qv-body">
+        <!-- Dynamically rendered quick view -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Main JavaScript File -->
+  <script src="app.js"></script>
+  <!-- Scroll Transitions & Visual Effects -->
+  <script src="scroll-effects.js"></script>
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>

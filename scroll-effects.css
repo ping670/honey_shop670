@@ -1,0 +1,454 @@
+/* ==========================================================================
+   SCROLL TRANSITIONS & VISUAL EFFECTS SYSTEM — Южен Пчелин
+   ========================================================================== */
+
+/* ── Scroll Progress Bar ── */
+#scroll-progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, #F59E0B 0%, #EA580C 50%, #F59E0B 100%);
+  z-index: 9999;
+  transition: width 0.08s linear;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.7), 0 0 4px rgba(245, 158, 11, 1);
+  pointer-events: none;
+}
+
+/* ── Cursor Glow Trail ── */
+#cursor-glow {
+  position: fixed;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.06) 0%, transparent 65%);
+  transform: translate(-50%, -50%);
+  z-index: 9998;
+  transition: left 0.12s ease, top 0.12s ease;
+  display: none;
+}
+@media (hover: hover) { #cursor-glow { display: block; } }
+
+/* ── Reveal Animation Base ── */
+.reveal {
+  opacity: 0;
+  transition:
+    opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.reveal--up     { transform: translateY(55px); }
+.reveal.reveal--down   { transform: translateY(-40px); }
+.reveal.reveal--left   { transform: translateX(-65px); }
+.reveal.reveal--right  { transform: translateX(65px); }
+.reveal.reveal--scale  { transform: scale(0.88); }
+.reveal.reveal--rotate { transform: translateY(45px) rotate(-5deg); }
+.reveal.reveal--blur   { transform: translateY(30px); filter: blur(8px); }
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* Stagger for children in a group */
+.reveal-group > .reveal:nth-child(1) { transition-delay: 0ms; }
+.reveal-group > .reveal:nth-child(2) { transition-delay: 110ms; }
+.reveal-group > .reveal:nth-child(3) { transition-delay: 220ms; }
+.reveal-group > .reveal:nth-child(4) { transition-delay: 330ms; }
+.reveal-group > .reveal:nth-child(5) { transition-delay: 440ms; }
+.reveal-group > .reveal:nth-child(6) { transition-delay: 550ms; }
+.reveal-group > .reveal:nth-child(7) { transition-delay: 660ms; }
+
+/* ── Glow Separator Line ── */
+.glow-separator {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(245, 158, 11, 0.5) 25%,
+    rgba(234, 88, 12, 0.85) 50%,
+    rgba(245, 158, 11, 0.5) 75%,
+    transparent 100%
+  );
+  position: relative;
+  overflow: visible;
+  margin: 0;
+}
+.glow-separator::after {
+  content: '';
+  position: absolute;
+  top: -5px; left: 15%; right: 15%;
+  height: 11px;
+  background: inherit;
+  filter: blur(8px);
+  opacity: 0.5;
+}
+
+/* ── Section Wave Transition SVG ── */
+.section-wave {
+  position: relative;
+  z-index: 2;
+  margin-top: -2px;
+  margin-bottom: -2px;
+  line-height: 0;
+  overflow: hidden;
+}
+.section-wave svg { display: block; width: 100%; }
+
+/* ── IMAGE PROPORTIONS — ALL IMAGES ── */
+
+/* Product card image — 1:1 square */
+.product-img-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  background: #0e0705;
+}
+
+.product-img-wrapper > .product-tag,
+.product-img-wrapper > .product-origin-tag,
+.product-img-wrapper > .product-quickview-btn {
+  position: absolute;
+  z-index: 3;
+}
+
+.product-img {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-card:hover .product-img {
+  transform: scale(1.1);
+}
+
+/* Left arch card image */
+.arch-product-img {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 90px;
+  display: block;
+}
+
+/* Right cream arch card image */
+.cream-product-img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 75px;
+  display: block;
+}
+
+/* Hero bottom cluster jars */
+.cluster-jar {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
+  border: 2px solid rgba(245,158,11,0.25);
+}
+
+.jar-1 { z-index: 2; }
+.jar-2 { z-index: 1; margin-left: -22px; margin-top: 16px; }
+
+/* Counter thumb (pill in hero right) */
+.counter-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Atmosphere section — mini jars */
+.mini-cluster-jar {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid rgba(245,158,11,0.2);
+}
+
+.offset-jar {
+  margin-left: -14px;
+  margin-top: 12px;
+}
+
+/* Atmosphere — floating candle image */
+.mini-floating-candle-img {
+  width: 85px;
+  height: 85px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+/* Atmosphere center — glass cube image */
+.cube-main-honey-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: inherit;
+  position: absolute;
+  inset: 0;
+}
+
+/* Quality section image */
+.quality-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: center;
+  border-radius: var(--radius-md);
+  display: block;
+}
+
+/* Artisan / craft arch card */
+.artisan-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: var(--radius-sm);
+}
+
+/* Quiz recommendation image */
+.quiz-rec-img {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+/* ── Shimmer Hover Effect on Cards ── */
+.shimmer-card {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 65%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+.shimmer-card:hover::after {
+  transform: translateX(100%);
+}
+
+/* ── Ripple effect on buttons ── */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+@keyframes btn-ripple-anim {
+  from { transform: scale(0); opacity: 0.55; }
+  to   { transform: scale(4); opacity: 0; }
+}
+.btn-ripple .ripple-dot {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  width: 60px; height: 60px;
+  margin: -30px 0 0 -30px;
+  animation: btn-ripple-anim 0.6s linear forwards;
+  pointer-events: none;
+}
+
+/* ── Floating orbs ambient decoration ── */
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(70px);
+  opacity: 0;
+  transition: opacity 1.4s ease;
+  z-index: 0;
+}
+.ambient-orb.orb-visible { opacity: 1; }
+.orb-gold  { background: radial-gradient(circle, rgba(245,158,11,0.2) 0%, transparent 70%); width: 500px; height: 500px; }
+.orb-amber { background: radial-gradient(circle, rgba(234,88,12,0.15) 0%, transparent 70%);  width: 350px; height: 350px; }
+
+/* ── Honey Drop decorative animation ── */
+@keyframes honeyDrop {
+  0%,100% { transform: translateY(-5px); }
+  50%     { transform: translateY(5px); }
+}
+.honey-drop-anim { animation: honeyDrop 3s ease-in-out infinite; }
+
+/* ── Section wipe entrance ── */
+@keyframes wipeIn {
+  from { clip-path: inset(0 100% 0 0); opacity: 0.3; }
+  to   { clip-path: inset(0 0 0 0);    opacity: 1; }
+}
+.section-wipe-animate {
+  animation: wipeIn 0.9s cubic-bezier(0.86, 0, 0.07, 1) forwards;
+}
+
+/* ── Text Gradient Highlight ── */
+.text-gradient-gold {
+  background: linear-gradient(135deg, #F5C242 0%, #EA580C 60%, #F59E0B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Parallax sections — slight depth feel ── */
+.hero-luxury,
+.atmosphere-spotlight-section {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Scroll-triggered glow pulse on section entry ── */
+@keyframes sectionGlowPulse {
+  0%   { box-shadow: 0 0 0 rgba(245,158,11,0); }
+  50%  { box-shadow: 0 0 80px rgba(245,158,11,0.12); }
+  100% { box-shadow: 0 0 0 rgba(245,158,11,0); }
+}
+.section-glow-enter {
+  animation: sectionGlowPulse 1.5s ease forwards;
+}
+
+/* ── Smooth section divider decorators ── */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 auto 50px;
+  max-width: 400px;
+  justify-content: center;
+}
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245,158,11,0.5));
+}
+.section-divider::after {
+  background: linear-gradient(270deg, transparent, rgba(245,158,11,0.5));
+}
+.section-divider span {
+  color: var(--primary-gold);
+  font-size: 1.2rem;
+}
+
+/* ── Hero image parallax clip ── */
+.hero-luxury .arch-card-orange,
+.hero-luxury .arch-card-cream {
+  will-change: transform;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   HONEY DRIP OVERLAY — appears at the top of each non-hero section
+   Simulates honey dripping from the hero/first slide downward
+   ══════════════════════════════════════════════════════════════ */
+
+/* Container pinned at the very top of a section */
+.honey-drip-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 160px;
+  pointer-events: none;
+  z-index: 4;
+  overflow: visible;
+}
+
+/* Each individual drip column */
+.honey-drip {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The drip "stream" — a narrow tapered rectangle */
+.honey-drip__stream {
+  width: 10px;
+  border-radius: 0 0 40% 40%;
+  background: linear-gradient(
+    180deg,
+    rgba(245, 158, 11, 0.90) 0%,
+    rgba(234, 88, 12, 0.75) 65%,
+    rgba(245, 158, 11, 0.18) 100%
+  );
+  transform-origin: top center;
+  position: relative;
+  animation: honeyStream var(--drip-dur, 2.8s) ease-in-out infinite alternate;
+  animation-delay: var(--drip-delay, 0s);
+  filter: blur(0.4px);
+  box-shadow: 0 0 8px rgba(245,158,11,0.55);
+}
+
+/* Gloss highlight on each stream */
+.honey-drip__stream::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(255,255,180,0.40) 0%, transparent 80%);
+  border-radius: inherit;
+}
+
+/* The rounded blob at the bottom of each drip */
+.honey-drip__blob {
+  width: 15px;
+  height: 15px;
+  border-radius: 50% 50% 58% 58%;
+  background: radial-gradient(
+    circle at 38% 38%,
+    rgba(255, 205, 65, 0.97) 0%,
+    rgba(234, 88, 12, 0.82) 60%,
+    rgba(140, 40, 0, 0.38) 100%
+  );
+  box-shadow:
+    0 0 12px rgba(245,158,11,0.65),
+    inset 0 -3px 4px rgba(0,0,0,0.22);
+  animation: honeyBlob var(--drip-dur, 2.8s) ease-in-out infinite alternate;
+  animation-delay: var(--drip-delay, 0s);
+  margin-top: -2px;
+  filter: blur(0.25px);
+}
+
+/* Stream grows/shrinks — honey flowing then retracting */
+@keyframes honeyStream {
+  0%   { height: 8px;  opacity: 0.45; }
+  45%  { height: var(--drip-max, 95px); opacity: 0.92; }
+  72%  { height: var(--drip-max, 95px); opacity: 1;    }
+  100% { height: 20px; opacity: 0.55; }
+}
+
+/* Blob translates down with the stream, then retracts */
+@keyframes honeyBlob {
+  0%   { transform: translateY(8px)  scale(0.55); opacity: 0.35; }
+  45%  { transform: translateY(calc(var(--drip-max, 95px) - 5px)) scale(1);    opacity: 1;   }
+  72%  { transform: translateY(calc(var(--drip-max, 95px) - 3px)) scale(1.08); opacity: 1;   }
+  100% { transform: translateY(18px) scale(0.60); opacity: 0.45; }
+}
