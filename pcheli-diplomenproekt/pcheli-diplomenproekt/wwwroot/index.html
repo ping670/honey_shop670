@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Пчелари България | Национална Платформа за Чист Български Мед &amp; Пчелен Прашец</title>
+  <meta name="description" content="Обединяваме независими пчелари от Странджа, Родопите, Тракия, Добруджа и Балкана. Купете 100% чист пчелен мед и пресен пчелен прашец директно от производителя без посредници.">
+  <meta name="keywords" content="пчелари българия, пчелен мед, пчелен прашец, странджански манов мед, акациев мед, родопски букет, добруджански мед, български мед, пчелини българия">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐝</text></svg>">
+  
+  <!-- Google Fonts: Balanced, Clean, Professional -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Scroll Transitions & Visual Effects -->
+  <link rel="stylesheet" href="scroll-effects.css">
+</head>
+<body class="dark-theme">
+
+  <!-- Header / Navbar -->
+  <header class="navbar" id="navbar">
+    <div class="container nav-container">
+      <a href="#hero" class="brand-logo">
+        <div class="logo-icon">
+          <img src="images/logo.jpg" alt="Пчелари България" class="logo-img">
+        </div>
+        <div class="logo-text">
+          <span class="brand-name">ПЧЕЛАРИ БЪЛГАРИЯ</span>
+          <span class="brand-tagline">ОБЕДИНЕНИ БЪЛГАРСКИ ПЧЕЛИНИ</span>
+        </div>
+      </a>
+
+      <nav class="nav-links" id="nav-links">
+        <a href="#hero">Начало</a>
+        <a href="#products">Каталог</a>
+        <a href="#regions">Региони</a>
+        <a href="#pollen-guide">Пчелен Прашец</a>
+        <a href="#beekeepers">Пчелари</a>
+        <a href="#quiz">Помощ при избор</a>
+        <a href="#reviews">Отзиви</a>
+        <a href="tel:+359888123456" class="mobile-only-call-btn">
+          📞 0888 123 456 (Национална Линия)
+        </a>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Button for beekeepers to register & offer products -->
+        <button class="btn btn-outline-gold nav-beekeeper-btn" onclick="window.openBeekeeperModal()">
+          <span>🐝</span>
+          <span>За Пчелари</span>
+        </button>
+
+        <button class="cart-btn" id="open-cart-btn" aria-label="Количка">
+          <i data-lucide="shopping-bag"></i>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </button>
+
+        <a href="tel:+359888123456" class="btn btn-outline nav-call-btn">
+          <i data-lucide="phone"></i>
+          <span>0888 123 456</span>
+        </a>
+
+        <button class="mobile-menu-btn" id="mobile-menu-btn">
+          <i data-lucide="menu"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Clean, Ordered, Humanoid Hero Section -->
+  <section class="hero-clean" id="hero">
+    <div class="hero-bg-art" aria-hidden="true">
+      <div class="hero-bg-image"></div>
+      <div class="hero-bg-overlay"></div>
+    </div>
+
+    <!-- Background Atmospheric Glows -->
+    <div class="luxury-bg-glow glow-center"></div>
+
+    <div class="container hero-content-wrapper text-center">
+      <!-- Eyebrow Badge -->
+      <div class="hero-eyebrow">
+        <span>🇧🇬</span>
+        <span>Национално Обединение на Българските Пчелари</span>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="hero-headline">
+        Истински български мед<br>и пресен пчелен прашец
+      </h1>
+
+      <!-- Grounded Human Subtitle -->
+      <p class="hero-subtext">
+        Свързваме независимите пчелари от Странджа, Родопите, Тракия, Добруджа и Дунавската равнина директно с вас. Купете 100% чист мед и пчелен прашец с гарантиран произход и регистрация по БАБХ — без прекупвачи, без претопляне и без добавена захар.
+      </p>
+
+      <!-- Action Buttons Group -->
+      <div class="hero-cta-group">
+        <a href="#products" class="btn btn-primary btn-lg">
+          <span>🍯 Разгледай Мед &amp; Прашец</span>
+          <i data-lucide="arrow-down"></i>
+        </a>
+        <button onclick="window.openBeekeeperModal()" class="btn btn-outline-gold btn-lg">
+          <span>🐝 Добави своя пчелин (За Пчелари)</span>
+        </button>
+      </div>
+
+      <!-- Honest Trust Highlights Bar -->
+      <div class="hero-trust-bar">
+        <div class="trust-item">
+          <span class="trust-icon">🌿</span>
+          <div class="trust-text">
+            <strong>100% Чист Добив</strong>
+            <span>Без захарни сиропи и добавки</span>
+          </div>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">📜</span>
+          <div class="trust-text">
+            <strong>БАБХ Сертификация</strong>
+            <span>Регистрирани пчелини с рег. №</span>
+          </div>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">📞</span>
+          <div class="trust-text">
+            <strong>Директен Контакт</strong>
+            <span>Обадете се лично на пчеларя</span>
+          </div>
+        </div>
+        <div class="trust-item">
+          <span class="trust-icon">🚚</span>
+          <div class="trust-text">
+            <strong>Доставка за Цяла България</strong>
+            <span>До дома или офис на куриер</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Catalog Section (Main Focus) -->
+  <section class="products-section" id="products">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="sub-heading">Реколта 2026 • Директно от кошера</span>
+        <h2 class="section-title">Каталог: Пчелен Мед &amp; Пчелен Прашец</h2>
+        <p style="max-width: 650px; margin: 10px auto 0; color: var(--text-soft); font-size: 0.95rem; line-height: 1.5;">
+          Всеки буркан мед и пакет прашец идва от сертифициран пчелин. Виждате точния регион, номера по БАБХ и телефон за директна връзка с пчеларя.
+        </p>
+      </div>
+
+      <!-- Type Switcher (All / Honey / Bee Pollen) -->
+      <div class="catalog-type-tabs" id="catalog-type-tabs">
+        <button class="type-tab-btn active" data-type="all" onclick="window.filterByType('all')">
+          <span>🇧🇬 Всички Продукти</span>
+        </button>
+        <button class="type-tab-btn" data-type="Мед" onclick="window.filterByType('Мед')">
+          <span>🍯 Натурален Пчелен Мед</span>
+        </button>
+        <button class="type-tab-btn" data-type="Пчелен прашец" onclick="window.filterByType('Пчелен прашец')">
+          <span>🌼 Пчелен Прашец</span>
+        </button>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="catalog-search-wrapper">
+        <i data-lucide="search" class="catalog-search-icon"></i>
+        <input type="text" id="catalog-search-input" class="catalog-search-input" placeholder="Търсете по вид мед, пчелин или регион (Странджа, Родопи, Тракия...)" oninput="window.handleSearchInput(this.value)">
+      </div>
+
+      <!-- Catalog Filters by Variety / Category -->
+      <div class="catalog-filters" id="catalog-filters">
+        <button class="filter-btn active" data-filter="all">Всички Видове</button>
+        <button class="filter-btn" data-filter="manov">Странджански Манов</button>
+        <button class="filter-btn" data-filter="acacia">Тракийска Акация</button>
+        <button class="filter-btn" data-filter="herbal">Родопски &amp; Горски Букет</button>
+        <button class="filter-btn" data-filter="lavender">Добруджанска Лавандула</button>
+        <button class="filter-btn" data-filter="linden">Дунавска Липа</button>
+        <button class="filter-btn" data-filter="pollen">Всички Прашци</button>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="products-grid" id="products-grid">
+        <!-- Dynamically populated via app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Regional Showcase Section -->
+  <section class="regions-section" id="regions">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="sub-heading">Българска географска палитра</span>
+        <h2 class="section-title">Пчелините по Региони</h2>
+        <p style="max-width: 650px; margin: 10px auto 0; color: var(--text-soft); font-size: 0.95rem; line-height: 1.5;">
+          Различните краища на България имат свой специфичен климат и растителност. Изберете регион, за да откриете местните производители и характерните им медове.
+        </p>
+      </div>
+
+      <div class="regions-grid" id="regions-grid">
+        <!-- Region 1: Strandja -->
+        <div class="region-card" onclick="window.filterByRegion('Странджа')">
+          <div class="region-card-header">
+            <span class="region-card-icon">🌲</span>
+            <div>
+              <h3 class="region-card-title">Странджа</h3>
+              <span class="region-card-count">Малко Търново • Царево</span>
+            </div>
+          </div>
+          <p class="region-card-desc">
+            Вековните дъбови гори дават световно признатия <strong>Странджански манов мед (ЗНП)</strong> — тъмен, плътен и изключително богат на минерали (желязо, магнезий и калий).
+          </p>
+          <div class="region-card-tags">
+            <span class="region-specialty-tag">Манов мед</span>
+            <span class="region-specialty-tag">Дъбов прашец</span>
+            <span class="region-specialty-tag">ЗНП Сертификат</span>
+          </div>
+        </div>
+
+        <!-- Region 2: Rhodopes -->
+        <div class="region-card" onclick="window.filterByRegion('Родопи')">
+          <div class="region-card-header">
+            <span class="region-card-icon">🏔️</span>
+            <div>
+              <h3 class="region-card-title">Родопите</h3>
+              <span class="region-card-count">Смолян • Момчиловци • Чепеларе</span>
+            </div>
+          </div>
+          <p class="region-card-desc">
+            Високопланинските ливади над 1200 м надморска височина раждат чист <strong>планински билков букет</strong> от мащерка, риган и жълт кантарион, както и пресен суров прашец.
+          </p>
+          <div class="region-card-tags">
+            <span class="region-specialty-tag">Билков букет</span>
+            <span class="region-specialty-tag">Суров замразен прашец</span>
+            <span class="region-specialty-tag">Планински билки</span>
+          </div>
+        </div>
+
+        <!-- Region 3: Thrace -->
+        <div class="region-card" onclick="window.filterByRegion('Тракия')">
+          <div class="region-card-header">
+            <span class="region-card-icon">🌾</span>
+            <div>
+              <h3 class="region-card-title">Тракийска Низина</h3>
+              <span class="region-card-count">Пловдив • Пазарджик • Садово</span>
+            </div>
+          </div>
+          <p class="region-card-desc">
+            Обширните акациеви гори по поречието на Марица дават нежен, кристално чист <strong>Акациев мед</strong>. Изключително подходящ за малки деца и за подслаждане на чай.
+          </p>
+          <div class="region-card-tags">
+            <span class="region-specialty-tag">Акациев мед</span>
+            <span class="region-specialty-tag">Пролетен прашец</span>
+            <span class="region-specialty-tag">Мек вкус</span>
+          </div>
+        </div>
+
+        <!-- Region 4: Dobrudja -->
+        <div class="region-card" onclick="window.filterByRegion('Добруджа')">
+          <div class="region-card-header">
+            <span class="region-card-icon">🌻</span>
+            <div>
+              <h3 class="region-card-title">Добруджа</h3>
+              <span class="region-card-count">Генерал Тошево • Добрич</span>
+            </div>
+          </div>
+          <p class="region-card-desc">
+            Равнините на Добруджа са известни с уханния <strong>Лавандулов мед</strong> с успокояващо действие и златен слънчогледов прашец, богат на лецитин и рутин.
+          </p>
+          <div class="region-card-tags">
+            <span class="region-specialty-tag">Лавандулов мед</span>
+            <span class="region-specialty-tag">Слънчоглед</span>
+            <span class="region-specialty-tag">Златен прашец</span>
+          </div>
+        </div>
+
+        <!-- Region 5: Danube -->
+        <div class="region-card" onclick="window.filterByRegion('Дунавска равнина')">
+          <div class="region-card-header">
+            <span class="region-card-icon">🌊</span>
+            <div>
+              <h3 class="region-card-title">Дунавска Равнина</h3>
+              <span class="region-card-count">Русе • Силистра • Плевен</span>
+            </div>
+          </div>
+          <p class="region-card-desc">
+            Вековните липови гори край река Дунав са източник на ароматен <strong>Липов мед</strong> с неповторим свеж ментов полъх. Традиционно средство при настинка и кашлица.
+          </p>
+          <div class="region-card-tags">
+            <span class="region-specialty-tag">Липов мед</span>
+            <span class="region-specialty-tag">Полифлорен сбор</span>
+          </div>
+        </div>
+
+        <!-- Region 6: Balkan Mountains -->
+        <div class="region-card" onclick="window.filterByRegion('Стара планина')">
+          <div class="region-card-header">
+            <span class="region-card-icon">⛰️</span>
+            <div>
+              <h3 class="region-card-title">Стара Планина</h3>
+              <span class="region-card-count">Трявна • Елена • Троян</span>
+            </div>
+          </div>
+          <p class="region-card-desc">
+            Планинските пасища на Тревненския и Еленския балкан дават богат <strong>горски полифлорен мед</strong> от дива детелина, къпина, малина и натурален прополис.
+          </p>
+          <div class="region-card-tags">
+            <span class="region-specialty-tag">Горски букет</span>
+            <span class="region-specialty-tag">Прополис</span>
+            <span class="region-specialty-tag">Чиста природа</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Educational Pollen Guide Section -->
+  <section class="pollen-guide-section" id="pollen-guide">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="sub-heading">Природна подкрепа за здравето</span>
+        <h2 class="section-title">Пчелен Прашец — Природна Енергия от Кошера</h2>
+        <p style="max-width: 680px; margin: 10px auto 0; color: var(--text-soft); font-size: 0.95rem; line-height: 1.5;">
+          Пчелният прашец е една от най-богатите природни храни. Съдържа всички 22 незаменими аминокиселини, растителни протеини и витамини от група B.
+        </p>
+      </div>
+
+      <div class="pollen-grid">
+        <div class="pollen-feature-card">
+          <div class="pollen-feature-icon">❄️</div>
+          <h3 class="pollen-feature-title">Пресен Суров Замразен Прашец</h3>
+          <p class="pollen-feature-text">
+            Събира се ежедневно от кошерите и се замразява веднага при -18°C без сушене. По този начин се запазват <strong>100% от живите ензими</strong>, витамин C и естествените пробиотични бактерии. Разтапя се леко на езика.
+          </p>
+        </div>
+
+        <div class="pollen-feature-card">
+          <div class="pollen-feature-icon">☀️</div>
+          <h3 class="pollen-feature-title">Сушен Цветен Прашец</h3>
+          <p class="pollen-feature-text">
+            Внимателно изсушен при щадяща температура под 38°C по традиционна българска пчеларска технология. Удобен за ежедневно съхранение в буркан. Приема се по 1 супена лъжица сутрин с кисело мляко или лъжица мед.
+          </p>
+        </div>
+
+        <div class="pollen-feature-card">
+          <div class="pollen-feature-icon">🛡️</div>
+          <h3 class="pollen-feature-title">22 Незаменими Аминокиселини</h3>
+          <p class="pollen-feature-text">
+            Пълен източник на растителен протеин, фолиева киселина, рутин и антиоксиданти. Подпомага имунитета, дава стабилна естествена енергия през деня и ускорява възстановяването при физическо и умствено натоварване.
+          </p>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 35px;">
+        <button class="btn btn-primary btn-lg" onclick="window.filterByType('Пчелен прашец')">
+          <span>🌼 Разгледай Предложенията за Пчелен Прашец</span>
+          <i data-lucide="arrow-down"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Honey & Pollen Recommendation (Simple Human Quiz) -->
+  <section class="quiz-section" id="quiz">
+    <div class="container">
+      <div class="quiz-card card-glass">
+        <div class="quiz-header text-center">
+          <div class="badge-tag"><i data-lucide="help-circle"></i> Помощ при избор</div>
+          <h2>Не сте сигурни кой мед или прашец да изберете?</h2>
+          <p>Всеки пчелен продукт има различен вкус и действие. Отговорете на 2 въпроса и вижте нашата препоръка според вашия вкус и цели.</p>
+        </div>
+
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" id="quiz-progress-fill" style="width: 50%;"></div>
+        </div>
+
+        <div class="quiz-body" id="quiz-body">
+          <!-- Dynamically populated via app.js -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Verified Beekeepers Section -->
+  <section class="beekeepers-section" id="beekeepers">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="sub-heading">Хората зад кошерите</span>
+        <h2 class="section-title">Производители в Платформата</h2>
+        <p style="max-width: 650px; margin: 10px auto 0; color: var(--text-soft); font-size: 0.95rem; line-height: 1.5;">
+          Всеки регистриран пчелар разполага с ветеринарен регистрационен номер от БАБХ и дългогодишен опит. Можете да се свържете с тях директно по телефона.
+        </p>
+      </div>
+
+      <div class="beekeepers-grid" id="beekeepers-grid">
+        <!-- Dynamically rendered beekeepers -->
+      </div>
+
+      <div style="text-align: center; margin-top: 40px;">
+        <button class="btn btn-outline-gold btn-lg" onclick="window.openBeekeeperModal()">
+          <span>🐝 Вие сте пчелар? Добавете своя пчелин в платформата</span>
+          <i data-lucide="plus-circle"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Customer Reviews Section -->
+  <section class="reviews-section" id="reviews">
+    <div class="container" style="position: relative; z-index: 2;">
+      <div class="section-header text-center">
+        <span class="sub-heading">Обратна връзка</span>
+        <h2 class="section-title">Отзиви от Нашите Клиенти</h2>
+        <p class="section-subtitle-reviews" style="max-width:620px; margin:10px auto 0; color:var(--text-soft); font-size:0.95rem; line-height:1.5;">
+          Споделете вашите впечатления от опитания мед или прашец и обслужването на пчеларите.
+        </p>
+      </div>
+
+      <!-- Add Review Form -->
+      <div class="review-form-wrapper" style="max-width: 680px; margin: 30px auto 40px;">
+        <div class="card-glass review-form-card" style="padding: 28px 30px; border-radius: 16px; border: 1px solid rgba(245, 158, 11, 0.22); box-shadow: 0 10px 30px rgba(0,0,0,0.35);">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+            <span style="font-size: 1.6rem;">✍️</span>
+            <div>
+              <h3 style="color: #FFF; font-size: 1.25rem; margin: 0; font-weight: 600;">Оставете Ваш Отзив</h3>
+              <p style="color: var(--text-muted); font-size: 0.85rem; margin: 3px 0 0;">Споделете какво поръчахте и как оценявате качеството</p>
+            </div>
+          </div>
+
+          <form id="user-review-form" onsubmit="event.preventDefault(); window.handleUserReviewSubmit();">
+            <div class="form-row-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="review-author-name" style="display: block; font-size: 0.85rem; color: #E2D5C8; margin-bottom: 6px;">Вашето Име *</label>
+                <input type="text" id="review-author-name" class="form-control" placeholder="напр. Иван Петров" required>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="review-author-city" style="display: block; font-size: 0.85rem; color: #E2D5C8; margin-bottom: 6px;">Град / Населено място</label>
+                <input type="text" id="review-author-city" class="form-control" placeholder="напр. гр. София / гр. Пловдив">
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 16px;">
+              <label style="display: block; font-size: 0.85rem; color: #E2D5C8; margin-bottom: 6px;">Вашата Оценка:</label>
+              <div class="star-rating-select" id="star-rating-select" style="display: flex; gap: 8px; font-size: 1.7rem; cursor: pointer; color: var(--primary-gold); line-height: 1;">
+                <span class="star-btn" data-rating="1" title="1 звезда">★</span>
+                <span class="star-btn" data-rating="2" title="2 звезди">★</span>
+                <span class="star-btn" data-rating="3" title="3 звезди">★</span>
+                <span class="star-btn" data-rating="4" title="4 звезди">★</span>
+                <span class="star-btn active" data-rating="5" title="5 звезди">★</span>
+              </div>
+              <input type="hidden" id="review-rating-value" value="5">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 22px;">
+              <label for="review-comment-text" style="display: block; font-size: 0.85rem; color: #E2D5C8; margin-bottom: 6px;">Вашият Коментар *</label>
+              <textarea id="review-comment-text" class="form-control" rows="3" placeholder="Споделете мнението си за опитания мед или прашец, вкуса и доставката..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 20px; font-size: 0.95rem;">
+              <i data-lucide="send"></i>
+              <span>Публикувай Отзива</span>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- User Reviews Dynamic List -->
+      <div class="reviews-grid" id="reviews-grid">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide Cart Drawer -->
+  <div class="cart-drawer-overlay" id="cart-drawer-overlay"></div>
+  <aside class="cart-drawer" id="cart-drawer">
+    <div class="cart-drawer-header">
+      <h3><i data-lucide="shopping-bag"></i> Вашата Количка (<span id="cart-drawer-count">0</span>)</h3>
+      <button class="close-btn" id="close-cart-btn"><i data-lucide="x"></i></button>
+    </div>
+
+    <div class="cart-shipping-banner" id="cart-shipping-banner">
+      <!-- Shipping progress -->
+    </div>
+
+    <div class="cart-items-container" id="cart-items-container">
+      <!-- Dynamic cart items -->
+    </div>
+
+    <div class="cart-drawer-footer">
+      <div class="promo-code-box">
+        <input type="text" id="promo-input" placeholder="Промо код (напр. BG10)" class="form-control-sm">
+        <button class="btn btn-outline-sm" id="apply-promo-btn">Приложи</button>
+      </div>
+      <div id="promo-message" class="promo-msg"></div>
+
+      <div class="cart-summary-lines">
+        <div class="summary-line">
+          <span>Мед и продукти:</span>
+          <span id="cart-subtotal">0.00 лв</span>
+        </div>
+        <div class="summary-line text-green" id="discount-row" style="display: none;">
+          <span>Отстъпка (10%):</span>
+          <span id="cart-discount">-0.00 лв</span>
+        </div>
+        <div class="summary-line">
+          <span>Доставка (България):</span>
+          <span id="cart-shipping">0.00 лв</span>
+        </div>
+        <div class="summary-line total-line">
+          <span>Обща Сума:</span>
+          <span id="cart-total" class="text-gold">0.00 лв</span>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-block btn-lg glow-effect" id="proceed-checkout-btn">
+        <i data-lucide="credit-card"></i> Премини към Поръчка
+      </button>
+    </div>
+  </aside>
+
+  <!-- Checkout Modal (Nationwide delivery) -->
+  <div class="modal-overlay" id="checkout-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i data-lucide="check-circle"></i> Завършване на Поръчката</h3>
+        <button class="close-btn" id="close-checkout-btn"><i data-lucide="x"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <form id="checkout-form" onsubmit="event.preventDefault(); window.handleCheckoutSubmit();">
+          <div class="checkout-grid">
+            <!-- Left Column: Customer details -->
+            <div class="checkout-col">
+              <h4>1. Данни за Получателя</h4>
+              <div class="form-group">
+                <label for="ck-name">Име и Фамилия *</label>
+                <input type="text" id="ck-name" class="form-control" required placeholder="Петър Георгиев">
+              </div>
+
+              <div class="form-group">
+                <label for="ck-phone">Телефон за потвърждение *</label>
+                <input type="tel" id="ck-phone" class="form-control" required placeholder="0888 123 456">
+              </div>
+
+              <div class="form-group">
+                <label for="ck-email">Имейл адрес (за разписка)</label>
+                <input type="email" id="ck-email" class="form-control" placeholder="petar@example.com">
+              </div>
+            </div>
+
+            <!-- Right Column: Shipping & Payment -->
+            <div class="checkout-col">
+              <h4>2. Доставка за Цяла България</h4>
+              <div class="form-group">
+                <label for="ck-city">Град / Област *</label>
+                <select id="ck-city" class="form-control" required>
+                  <option value="София">гр. София</option>
+                  <option value="Пловдив">гр. Пловдив</option>
+                  <option value="Варна">гр. Варна</option>
+                  <option value="Бургас">гр. Бургас</option>
+                  <option value="Русе">гр. Русе</option>
+                  <option value="Стара Загора">гр. Стара Загора</option>
+                  <option value="Плевен">гр. Плевен</option>
+                  <option value="Добрич">гр. Добрич</option>
+                  <option value="Смолян">гр. Смолян</option>
+                  <option value="Благоевград">гр. Благоевград</option>
+                  <option value="Велико Търново">гр. Велико Търново</option>
+                  <option value="Друго населено място">Друго населено място в България</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="ck-address">Адрес за доставка или Офис на Еконт / Спиди *</label>
+                <input type="text" id="ck-address" class="form-control" required placeholder="напр. бул. България 45 или Офис Еконт Център">
+              </div>
+
+              <div class="form-group payment-methods-group">
+                <label style="display:flex; justify-content:space-between; align-items:center;">
+                  <span>Начин на Плащане *</span>
+                  <span style="font-size:0.75rem; color:var(--text-muted);">Без скрити такси</span>
+                </label>
+                
+                <div class="payment-radios-list" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                  <label class="payment-radio-item active" style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.04); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(245, 158, 11, 0.4); cursor: pointer;">
+                    <input type="radio" name="payment" id="pay-cod" value="cod" checked>
+                    <span>💵 Наложен платеж (в брой или с карта при доставка)</span>
+                  </label>
+                  <label class="payment-radio-item" style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.04); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer;">
+                    <input type="radio" name="payment" id="pay-card" value="card">
+                    <span>💳 Банкова Карта / Revolut Pay</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Summary in Checkout -->
+          <div class="modal-order-summary" style="background: rgba(0,0,0,0.3); padding: 16px; border-radius: 10px; margin: 20px 0;">
+            <div class="summary-line">
+              <span>Избран метод:</span>
+              <strong id="ck-summary-payment" class="text-gold">Наложен платеж</strong>
+            </div>
+            <div class="summary-line total-line">
+              <span>Крайна Сума за плащане:</span>
+              <strong id="ck-summary-total" class="text-gold">0.00 лв</strong>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg glow-effect">
+            <i data-lucide="check"></i> Потвърди &amp; Изпрати Поръчката
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: BEEKEEPER APPLICATION (За Пчелари) -->
+  <div class="modal-overlay" id="beekeeper-modal">
+    <div class="modal-card" style="max-width: 700px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 1.8rem;">🐝</span>
+          <div>
+            <h3 style="margin: 0; color: #FFF; font-size: 1.3rem;">Добави Своя Пчелин в «Пчелари България»</h3>
+            <span style="color: var(--primary-gold); font-size: 0.85rem;">Предложете своя мед или прашец директно на крайните потребители</span>
+          </div>
+        </div>
+        <button class="close-btn" onclick="window.closeBeekeeperModal()"><i data-lucide="x"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <form id="beekeeper-form" onsubmit="event.preventDefault(); window.handleBeekeeperSubmit();">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+              <label for="bk-name">Име и Фамилия на пчеларя *</label>
+              <input type="text" id="bk-name" class="form-control" required placeholder="напр. Иван Иванов">
+            </div>
+            <div class="form-group">
+              <label for="bk-apiary">Име на Пчелина / Стопанството *</label>
+              <input type="text" id="bk-apiary" class="form-control" required placeholder="напр. Пчелин «Балканско злато»">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+              <label for="bk-babh">Регистрационен № по БАБХ *</label>
+              <input type="text" id="bk-babh" class="form-control" required placeholder="напр. БАБХ-4700-0988">
+            </div>
+            <div class="form-group">
+              <label for="bk-region">Регион на кошерите *</label>
+              <select id="bk-region" class="form-control" required>
+                <option value="Странджа">Странджа</option>
+                <option value="Родопи">Родопите</option>
+                <option value="Тракия">Тракийска низина</option>
+                <option value="Добруджа">Добруджа</option>
+                <option value="Дунавска равнина">Дунавска равнина</option>
+                <option value="Стара планина">Стара планина / Балкан</option>
+                <option value="Пирин и Рила">Пирин &amp; Рила</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+              <label for="bk-city">Населено място (село / град) *</label>
+              <input type="text" id="bk-city" class="form-control" required placeholder="напр. с. Смилян">
+            </div>
+            <div class="form-group">
+              <label for="bk-phone">Телефон за връзка с клиенти *</label>
+              <input type="tel" id="bk-phone" class="form-control" required placeholder="0888 123 456">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label style="display: block; margin-bottom: 8px;">Какви продукти предлагате? *</label>
+            <div style="display: flex; gap: 20px;">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #FFF;">
+                <input type="checkbox" id="bk-offer-honey" checked style="width: 18px; height: 18px; accent-color: var(--primary-gold);">
+                <span>🍯 Пчелен Мед</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #FFF;">
+                <input type="checkbox" id="bk-offer-pollen" checked style="width: 18px; height: 18px; accent-color: var(--primary-gold);">
+                <span>🌼 Пчелен Прашец</span>
+              </label>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 15px;">
+            <div class="form-group">
+              <label for="bk-hives">Брой кошери</label>
+              <input type="number" id="bk-hives" class="form-control" value="60" min="5" max="2000">
+            </div>
+            <div class="form-group">
+              <label for="bk-details">Видове мед/прашец, цена, реколта</label>
+              <input type="text" id="bk-details" class="form-control" placeholder="напр. Манов мед 12 лв/буркан, суров прашец 9 лв">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg glow-effect" style="margin-top: 15px;">
+            <i data-lucide="check"></i> Запиши Пчелина &amp; Добави Продуктите
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Success Confirmation Modal -->
+  <div class="modal-overlay" id="success-modal">
+    <div class="modal-card text-center success-card">
+      <div class="success-icon-badge">🐝</div>
+      <h2>Поръчката ви е приета успешно!</h2>
+      <p class="lead-text">Благодарим ви, че подкрепяте независимите български пчелари!</p>
+      
+      <div class="order-receipt-box">
+        <div class="receipt-row"><span>Номер на поръчка:</span> <strong id="receipt-order-id">#BG-HONEY-94821</strong></div>
+        <div class="receipt-row"><span>Град за доставка:</span> <strong id="receipt-city">София</strong></div>
+        <div class="receipt-row"><span>Метод на плащане:</span> <strong id="receipt-payment" class="text-gold">Наложен Платеж</strong></div>
+        <div class="receipt-row"><span>Обща Сума:</span> <strong id="receipt-total" class="text-gold">0.00 лв</strong></div>
+      </div>
+
+      <p class="small-text">Данните са записани в системата. Пчеларят ще се свърже с вас на посочения телефон за потвърждение на доставката.</p>
+
+      <button class="btn btn-primary btn-lg" onclick="document.getElementById('success-modal').classList.remove('active')">
+        <i data-lucide="thumbs-up"></i> Към Каталога
+      </button>
+    </div>
+  </div>
+
+  <!-- Quick View Product Modal -->
+  <div class="modal-overlay" id="quickview-modal">
+    <div class="modal-card" style="max-width: 800px;">
+      <div class="modal-header">
+        <h3 id="qv-title">Детайли за Продукта</h3>
+        <button class="close-btn" onclick="document.getElementById('quickview-modal').classList.remove('active')"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body" id="qv-body">
+        <!-- Dynamically rendered quick view -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- CLEAN, PROFESSIONAL FOOTER -->
+  <footer class="footer-national" id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+            <span style="font-size: 2rem;">🐝</span>
+            <div>
+              <h3 style="color: #FFF; font-size: 1.25rem; margin: 0; font-weight: 700;">ПЧЕЛАРИ БЪЛГАРИЯ</h3>
+              <span style="color: var(--primary-gold); font-size: 0.8rem; letter-spacing: 1px;">НАЦИОНАЛНА ПЛАТФОРМА</span>
+            </div>
+          </div>
+          <p style="color: var(--text-soft); font-size: 0.9rem; line-height: 1.6; max-width: 320px;">
+            Платформа за директна връзка между българските пчелари и потребителите, които търсят чист мед и пчелен прашец от производител.
+          </p>
+          <div style="margin-top: 15px; color: var(--text-muted); font-size: 0.82rem;">
+            🛡️ Всички пчелини са с регистрация по БАБХ съгласно Закона за пчеларството.
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Региони</h4>
+          <ul class="footer-links">
+            <li><a href="#products" onclick="window.filterByRegion('Странджа')">🌲 Странджа (Манов мед)</a></li>
+            <li><a href="#products" onclick="window.filterByRegion('Родопи')">🏔️ Родопите (Билков букет)</a></li>
+            <li><a href="#products" onclick="window.filterByRegion('Тракия')">🌾 Тракия (Акациев мед)</a></li>
+            <li><a href="#products" onclick="window.filterByRegion('Добруджа')">🌻 Добруджа (Лавандула)</a></li>
+            <li><a href="#products" onclick="window.filterByRegion('Дунавска равнина')">🌊 Дунав (Липов мед)</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Продукти</h4>
+          <ul class="footer-links">
+            <li><a href="#products" onclick="window.filterByType('Мед')">🍯 100% Натурален Мед</a></li>
+            <li><a href="#products" onclick="window.filterByType('Пчелен прашец')">🌼 Пресен Суров Прашец</a></li>
+            <li><a href="#products" onclick="window.filterByType('Пчелен прашец')">☀️ Сушен Цветен Прашец</a></li>
+            <li><a href="#pollen-guide">🧬 Ползи от Прашеца</a></li>
+            <li><a href="#quiz">❓ Помощ при избор</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>За Пчелари</h4>
+          <ul class="footer-links">
+            <li><a href="#" onclick="window.openBeekeeperModal(); return false;">🐝 Добави своя пчелин</a></li>
+            <li><a href="#" onclick="window.openBeekeeperModal(); return false;">📦 Публикувай мед или прашец</a></li>
+            <li><a href="tel:+359888123456">📞 Въпроси и контакти</a></li>
+            <li><a href="#beekeepers">📜 Регистър на пчеларите</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 ПЧЕЛАРИ БЪЛГАРИЯ — Национална платформа за чист мед и пчелен прашец. Дипломен проект.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript File -->
+  <script src="app.js"></script>
+  <!-- Scroll Transitions & Visual Effects -->
+  <script src="scroll-effects.js"></script>
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>

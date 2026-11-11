@@ -7,4 +7,8 @@
     <RootNamespace>pcheli_diplomenproekt</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.5" />
+  </ItemGroup>
+
 </Project>
