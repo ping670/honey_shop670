@@ -21,9 +21,8 @@ public class Beekeeper
     [MaxLength(50)]
     public string RegistrationNumber { get; set; } = string.Empty; // БАБХ номер
 
-    [Required]
-    [MaxLength(80)]
-    public string Region { get; set; } = string.Empty; // Странджа, Родопи, Тракия, Добруджа, Дунавска равнина, Стара планина
+    public int RegionId { get; set; }
+    public Region? Region { get; set; }
 
     [Required]
     [MaxLength(100)]
@@ -33,7 +32,6 @@ public class Beekeeper
     [MaxLength(30)]
     public string Phone { get; set; } = string.Empty;
 
-    [EmailAddress]
     [MaxLength(100)]
     public string Email { get; set; } = string.Empty;
 

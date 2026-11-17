@@ -55,6 +55,9 @@
 html {
   scroll-behavior: smooth;
   background-color: var(--bg-deep);
+  /* Целият сайт е намален с 10%. Височините във vh се делят на --site-zoom, за да запълват екрана. */
+  --site-zoom: 0.9;
+  zoom: var(--site-zoom);
 }
 
 body {
@@ -64,7 +67,7 @@ body {
   color: var(--text-main);
   line-height: 1.6;
   overflow-x: hidden;
-  min-height: 100vh;
+  min-height: calc(100vh / var(--site-zoom));
 }
 
 body.splash-active {
@@ -109,8 +112,8 @@ button, input, select, textarea {
 .splash-curtain {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  width: 100vw;
-  height: 100vh;
+  width: calc(100vw / var(--site-zoom));
+  height: calc(100vh / var(--site-zoom));
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -1074,7 +1077,7 @@ body.dark-theme .navbar {
 
 /* ── Clean title-only hero variant ── */
 .hero-title-only {
-  min-height: 88vh;
+  min-height: calc(88vh / var(--site-zoom));
 }
 
 .hero-title-center {
@@ -2892,7 +2895,7 @@ body.dark-theme .navbar {
   border-radius: var(--radius-md);
   width: 100%;
   max-width: 750px;
-  max-height: 90vh;
+  max-height: calc(90vh / var(--site-zoom));
   overflow-y: auto;
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
   border: 1px solid var(--amber-border);
@@ -3493,7 +3496,7 @@ body.dark-theme .navbar {
   }
   .modal-card {
     width: 100%;
-    max-height: 92vh;
+    max-height: calc(92vh / var(--site-zoom));
     border-radius: 18px;
     margin: auto;
   }
@@ -4076,8 +4079,11 @@ body.dark-theme .navbar {
 .hero-cta-group {
   display: flex;
   gap: 16px;
-  justify-content: center;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  width: 100%;
+  max-width: 760px;
   margin-bottom: 48px;
 }
 
@@ -4087,19 +4093,26 @@ body.dark-theme .navbar {
   gap: 16px;
   width: 100%;
   max-width: 980px;
-  background: rgba(20, 10, 6, 0.8);
-  border: 1px solid rgba(245, 158, 11, 0.22);
-  border-radius: 16px;
-  padding: 20px 24px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 20px 0;
+  backdrop-filter: none;
+  box-shadow: none;
 }
 
 @media (max-width: 860px) {
   .hero-trust-bar {
     grid-template-columns: 1fr 1fr;
     gap: 14px;
-    padding: 16px;
+    padding: 16px 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-cta-group {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }
 
@@ -4140,3 +4153,602 @@ body.dark-theme .navbar {
   font-size: 0.78rem;
   margin-top: 2px;
 }
+
+/* Телефонният линк в менюто е само за мобилното меню (там се показва с !important). */
+.nav-links .mobile-only-call-btn { display: none; }
+
+/* На по-тесни компютърни екрани менюто не се събира: бутонът за телефон остава само с иконка. */
+@media (max-width: 1600px) {
+  .nav-call-btn span { display: none; }
+  .nav-call-btn { padding: 8px 11px !important; }
+  .nav-links a { padding: 7px 10px; }
+}
+
+/* ==========================================================================
+   Начален екран: „Пчеларите на България, обединени на едно място“
+   ========================================================================== */
+/* Windows не рисува емоджи знамена (показва буквите „BG“), затова знамето е нарисувано с CSS. */
+.flag-bg {
+  display: inline-block;
+  width: 20px;
+  height: 14px;
+  border-radius: 2px;
+  vertical-align: -2px;
+  background: linear-gradient(to bottom, #fff 0 33.3%, #00966E 33.3% 66.6%, #D62612 66.6% 100%);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
+}
+
+/* Горният отстъп е малък, за да се събира целият екран (с числата) без скролиране. */
+.hero-clean:has(.hero-unite) { padding: 44px 0 52px; }
+
+.hero-unite {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 44px;
+  align-items: center;
+}
+
+.hero-unite .hero-eyebrow { margin-bottom: 18px; }
+
+.hero-unite-text { text-align: left; }
+
+.hero-unite-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 3.3vw, 2.9rem);
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: -0.5px;
+  color: #FFF;
+  margin: 0 0 16px;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
+}
+
+.hero-unite-title em {
+  font-style: italic;
+  background: linear-gradient(100deg, #FDE68A 0%, #F59E0B 55%, #EA580C 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-unite-lead {
+  font-size: clamp(1rem, 1.6vw, 1.12rem);
+  line-height: 1.7;
+  color: var(--text-soft);
+  max-width: 600px;
+  margin: 0 0 18px;
+}
+
+.hero-unite-points {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+  display: grid;
+  gap: 8px;
+}
+
+.hero-unite-points li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-main);
+  font-size: 0.98rem;
+}
+
+.hero-unite-points li span {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.hero-unite-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 26px;
+}
+
+/* И двата бутона са с еднаква височина и размер на текста. */
+.hero-unite-cta .btn { padding: 14px 22px; font-size: 0.95rem; white-space: nowrap; }
+
+.hero-unite-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  border-top: 1px solid rgba(245, 158, 11, 0.2);
+  padding-top: 22px;
+  max-width: 600px;
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  padding: 0 14px;
+  border-left: 1px solid rgba(245, 158, 11, 0.15);
+}
+
+.hero-stat:first-child { padding-left: 0; border-left: none; }
+
+.hero-stat strong {
+  font-family: var(--font-serif);
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--primary-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-stat span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-top: 4px;
+}
+
+/* ---- Картата ---- */
+.hero-map {
+  margin: 0;
+  position: relative;
+  padding: 22px;
+  border-radius: 24px;
+  background: linear-gradient(160deg, rgba(36, 18, 10, 0.75), rgba(14, 7, 4, 0.6));
+  border: 1px solid rgba(245, 158, 11, 0.22);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.hero-map-svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+.hero-map figcaption {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 10px;
+}
+
+.map-land {
+  fill: url(#mapFill);
+  stroke: rgba(245, 158, 11, 0.45);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.map-links path {
+  fill: none;
+  stroke: rgba(245, 158, 11, 0.55);
+  stroke-width: 1.6;
+  stroke-dasharray: 5 7;
+  animation: map-link-flow 1.6s linear infinite;
+}
+
+@keyframes map-link-flow { to { stroke-dashoffset: -24; } }
+
+.map-bees circle {
+  fill: #FDE68A;
+  filter: drop-shadow(0 0 4px rgba(253, 230, 138, 0.9));
+}
+
+.map-node { cursor: pointer; outline: none; }
+
+.map-node .dot {
+  fill: var(--primary-gold);
+  stroke: #1a0e07;
+  stroke-width: 2.5;
+  transition: transform 0.2s ease;
+}
+
+.map-node .pulse {
+  fill: rgba(245, 158, 11, 0.35);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: map-pulse 2.4s ease-out infinite;
+}
+
+@keyframes map-pulse {
+  0%   { transform: scale(1);   opacity: 0.9; }
+  100% { transform: scale(3.2); opacity: 0; }
+}
+
+.map-node.is-empty .dot { fill: transparent; stroke: rgba(245, 158, 11, 0.8); stroke-dasharray: 3 3; }
+.map-node.is-empty .pulse { animation: none; opacity: 0; }
+
+.map-node:hover .dot,
+.map-node:focus-visible .dot { transform: scale(1.35); fill: #FDE68A; }
+
+.map-label {
+  font-family: var(--font-main);
+  font-size: 19px;
+  font-weight: 600;
+  fill: #FFF;
+  paint-order: stroke;
+  stroke: #120904;
+  stroke-width: 4px;
+}
+
+.map-count {
+  font-family: var(--font-main);
+  font-size: 15px;
+  fill: #FCD34D;
+  paint-order: stroke;
+  stroke: #120904;
+  stroke-width: 4px;
+}
+
+.map-node.is-empty .map-count { fill: var(--text-muted); font-style: italic; }
+
+.map-hub polygon {
+  fill: var(--primary-gold);
+  stroke: #FDE68A;
+  stroke-width: 2;
+  filter: drop-shadow(0 0 14px rgba(245, 158, 11, 0.75));
+}
+
+.map-hub text { font-size: 20px; }
+
+/* ---- Как работи ---- */
+.how-it-works {
+  position: relative;
+  background: linear-gradient(to bottom, #0E0905, #0c0604);
+  border-top: 1px solid rgba(245, 158, 11, 0.12);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.12);
+  padding: 34px 0;
+}
+
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+}
+
+.how-step { display: flex; gap: 16px; align-items: flex-start; }
+
+.how-num {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a0e07;
+  background: linear-gradient(135deg, #FDE68A, #F59E0B);
+}
+
+.how-step strong { display: block; color: #FFF; font-size: 1rem; margin-bottom: 4px; }
+.how-step p { margin: 0; color: var(--text-soft); font-size: 0.9rem; line-height: 1.55; }
+
+@media (max-width: 960px) {
+  .hero-unite { grid-template-columns: 1fr; gap: 36px; }
+  .hero-unite-text { text-align: center; }
+  .hero-unite-lead, .hero-unite-stats { margin-left: auto; margin-right: auto; }
+  .hero-unite-points { width: fit-content; max-width: 100%; margin-left: auto; margin-right: auto; }
+  .hero-unite-points li { text-align: left; }
+  .hero-unite-cta { justify-content: center; }
+  .hero-map { max-width: 620px; margin: 0 auto; width: 100%; }
+  .how-grid { grid-template-columns: 1fr; gap: 18px; }
+}
+
+@media (max-width: 520px) {
+  .hero-unite-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 16px; }
+  .hero-stat:nth-child(3) { padding-left: 0; border-left: none; }
+  .hero-map { padding: 12px; }
+  .map-label { font-size: 23px; }
+  .map-count { font-size: 17px; }
+  .hero-unite-cta .btn { width: 100%; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-links path, .map-node .pulse { animation: none; }
+  .map-bees { display: none; }
+}
+
+/* ==========================================================================
+   НАЧАЛЕН ЕКРАН В КИНЕМАТОГРАФЕН СТИЛ
+   Снимка на цял екран, прозрачно меню, голямо заглавие по средата и
+   висок бутон „За пчелари“ в горния десен ъгъл.
+   ========================================================================== */
+html { scroll-padding-top: 70px; }
+
+/* ---- Менюто: прозрачно, над снимката ---- */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+}
+
+.navbar .container.nav-container {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  gap: 24px;
+  padding: 22px 160px 22px 44px;
+  border: none;
+  border-radius: 0;
+  background: linear-gradient(to bottom, rgba(8, 4, 2, 0.66) 0%, rgba(8, 4, 2, 0) 100%);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+.navbar.scrolled .container.nav-container {
+  margin: 0;
+  border-radius: 0;
+  padding: 12px 160px 12px 44px;
+  background: rgba(10, 6, 3, 0.92);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.5);
+}
+
+.navbar .logo-icon {
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  border-color: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+}
+.navbar .brand-name { letter-spacing: 2px; text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6); }
+.navbar .brand-tagline { opacity: 1; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7); }
+
+/* Кръгли бутони вдясно: количка и телефон */
+.navbar .cart-btn,
+.navbar .nav-call-btn {
+  background: rgba(8, 4, 2, 0.28) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  color: #FFF !important;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.navbar .cart-btn:hover,
+.navbar .nav-call-btn:hover {
+  background: var(--primary-gold) !important;
+  border-color: var(--primary-gold) !important;
+  color: #1a0e07 !important;
+}
+
+/* Високият бутон „За пчелари“ в десния ъгъл */
+.navbar .nav-beekeeper-btn {
+  position: absolute !important;
+  top: 0; right: 0;
+  width: 132px; height: 156px;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 10px !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: rgba(196, 134, 48, 0.82) !important;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #FFF !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 1.35;
+  transition: background 0.3s ease, height 0.35s ease, width 0.35s ease !important;
+}
+.navbar .nav-beekeeper-btn span:first-child { font-size: 2rem; line-height: 1; }
+.navbar .nav-beekeeper-btn:hover { background: var(--primary-gold) !important; color: #1a0e07 !important; transform: none !important; box-shadow: none !important; }
+.navbar.scrolled .nav-beekeeper-btn { height: 100%; width: 150px; flex-direction: row; gap: 10px; }
+.navbar.scrolled .nav-beekeeper-btn span:first-child { font-size: 1.4rem; }
+
+@media (min-width: 1025px) {
+  .nav-links { gap: 2px; font-size: 0.8rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; }
+  .nav-links a {
+    padding: 8px 12px;
+    border-radius: 0;
+    background: none;
+    color: #FFF;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.65);
+  }
+  .nav-links a:hover { background: none; color: #FDE68A; }
+  .nav-links a.active-link { background: none; color: #FDE68A; }
+  .nav-links a::after { width: 24px; bottom: 0; }
+}
+
+@media (min-width: 1025px) and (max-width: 1500px) {
+  .navbar .container.nav-container { padding-left: 28px; gap: 14px; }
+  .nav-links { font-size: 0.72rem; letter-spacing: 1px; }
+  .nav-links a { padding: 8px 8px; }
+  .navbar .brand-tagline { display: none; }
+}
+
+@media (min-width: 1025px) and (max-width: 1250px) {
+  .navbar .logo-text { display: none; }
+}
+
+/* ---- Началната снимка на цял екран ---- */
+.hero-clean.hero-cinema {
+  min-height: calc(100vh / var(--site-zoom));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 150px 0 120px;
+  text-align: center;
+  background: #0E0905;
+}
+
+.hero-cinema .hero-bg-image {
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-image: url('images/hero.png');
+  background-size: cover;
+  background-position: center 58%;
+  opacity: 1;
+  filter: saturate(1.1) contrast(1.03);
+}
+
+.hero-cinema .hero-bg-overlay {
+  background:
+    radial-gradient(ellipse at 50% 48%, rgba(8, 4, 2, 0.36) 0%, rgba(8, 4, 2, 0.04) 72%),
+    linear-gradient(to bottom, rgba(8, 4, 2, 0.38) 0%, rgba(8, 4, 2, 0) 24%, rgba(8, 4, 2, 0.06) 60%, #0E0905 100%);
+}
+
+.hero-cinema-content {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-cinema .hero-eyebrow {
+  background: rgba(8, 4, 2, 0.42);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  margin-bottom: 26px;
+}
+
+.hero-cinema .hero-unite-title {
+  font-size: clamp(2.3rem, 5.2vw, 4.7rem);
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  line-height: 1.16;
+  margin: 0 0 24px;
+  text-align: center;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.65), 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.hero-cinema .hero-unite-title em {
+  background: none;
+  -webkit-text-fill-color: #FDE68A;
+  color: #FDE68A;
+}
+
+.hero-cinema .hero-unite-lead {
+  max-width: 780px;
+  margin: 0 auto 32px;
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  color: #F7EEE2;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.8);
+}
+
+.hero-cinema .hero-unite-cta { justify-content: center; margin-bottom: 0; }
+
+.hero-cinema .btn-outline-gold {
+  background: rgba(8, 4, 2, 0.4);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: #FFF;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+.hero-cinema .btn-outline-gold:hover { background: var(--primary-gold); color: #1a0e07; border-color: var(--primary-gold); }
+
+.hero-scroll-cue {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.72rem;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
+}
+.hero-scroll-cue i, .hero-scroll-cue svg { animation: cue-bounce 1.8s ease-in-out infinite; }
+@keyframes cue-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+
+/* ---- Секцията с идеята, числата и картата ---- */
+.unite-section {
+  position: relative;
+  background: #0E0905;
+  padding: 72px 0 44px;
+}
+
+.unite-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: 56px;
+  align-items: center;
+}
+
+.unite-text .hero-unite-points { margin-bottom: 34px; }
+.unite-text .hero-unite-points li { font-size: 1.05rem; }
+.unite-text .hero-unite-stats { max-width: none; }
+
+@media (max-width: 960px) {
+  .unite-grid { grid-template-columns: 1fr; gap: 36px; }
+  .unite-section { padding-top: 48px; }
+}
+
+/* ---- Телефон и таблет ---- */
+@media (max-width: 1024px) {
+  .navbar .container.nav-container,
+  .navbar.scrolled .container.nav-container { padding: 12px 14px; gap: 10px; }
+  .navbar .container.nav-container { background: linear-gradient(to bottom, rgba(8, 4, 2, 0.75), rgba(8, 4, 2, 0)); }
+  .navbar.scrolled .container.nav-container { background: rgba(10, 6, 3, 0.94); }
+
+  .navbar .nav-beekeeper-btn,
+  .navbar.scrolled .nav-beekeeper-btn {
+    position: static !important;
+    width: auto; height: 40px;
+    flex-direction: row;
+    gap: 6px;
+    padding: 0 12px !important;
+    border-radius: 999px !important;
+    font-size: 0.68rem !important;
+    letter-spacing: 0.8px;
+  }
+  .navbar .nav-beekeeper-btn span:first-child { font-size: 1.05rem; }
+
+  .hero-clean.hero-cinema { padding: 110px 0 90px; }
+}
+
+@media (max-width: 520px) {
+  .navbar .logo-text { display: none; }
+  .navbar .nav-beekeeper-btn span:last-child { display: none; }
+  .navbar .nav-beekeeper-btn { width: 40px; padding: 0 !important; justify-content: center; }
+  .hero-cinema .hero-unite-title { letter-spacing: 0.5px; }
+  .hero-scroll-cue { bottom: 14px; }
+}
+/* ==========================================================================
+   КАРТА НА БЪЛГАРИЯ: светла, с меден цвят на сушата
+   ========================================================================== */
+.hero-map {
+  background: linear-gradient(160deg, #FFF7E0 0%, #FCE6AD 100%);
+  border: 1px solid rgba(160, 100, 20, 0.35);
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.hero-map figcaption { color: #7A5A2A; }
+
+.map-land {
+  fill: url(#mapFill);
+  stroke: #8A5208;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 6px 8px rgba(110, 60, 0, 0.3));
+}
+
+.map-links path { stroke: rgba(74, 42, 8, 0.6); stroke-width: 1.5; }
+
+.map-bees circle { fill: #FFFFFF; stroke: #4A2A08; stroke-width: 1.4; filter: none; }
+
+.map-node .dot { fill: #4A2A08; stroke: #FFF3D1; stroke-width: 2.5; }
+.map-node .pulse { fill: rgba(74, 42, 8, 0.28); }
+.map-node:hover .dot,
+.map-node:focus-visible .dot { fill: #B45309; }
+.map-node.is-empty .dot { fill: #FFF3D1; stroke: #4A2A08; stroke-dasharray: 3 3; }
+
+.map-label { fill: #2E1A06; stroke: #FFF1CF; stroke-width: 4.5px; }
+.map-count { fill: #6B3F06; stroke: #FFF1CF; stroke-width: 4px; font-weight: 500; }
+.map-node.is-empty .map-count { fill: #8A6A3A; }
+
+.map-hub polygon { fill: #3A2106; stroke: #FFE08A; stroke-width: 2.2; filter: drop-shadow(0 4px 8px rgba(60, 30, 0, 0.45)); }

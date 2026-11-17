@@ -364,3 +364,10 @@ FodyWeavers.xsd
 # SQLite temporary files
 *.db-shm
 *.db-wal
+
+# --- Локални бази данни и тайни ---
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+appsettings.Local.json

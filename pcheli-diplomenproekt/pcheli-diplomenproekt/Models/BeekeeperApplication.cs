@@ -21,9 +21,12 @@ public class BeekeeperApplication
     [MaxLength(50)]
     public string RegistrationNumber { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Изберете регион")]
-    [MaxLength(80)]
-    public string Region { get; set; } = string.Empty;
+    // Ако заявката е одобрена – създаденият пчелар
+    public int? BeekeeperId { get; set; }
+    public Beekeeper? Beekeeper { get; set; }
+
+    public int RegionId { get; set; }
+    public Region? Region { get; set; }
 
     [Required(ErrorMessage = "Въведете населено място")]
     [MaxLength(100)]
@@ -33,7 +36,6 @@ public class BeekeeperApplication
     [MaxLength(30)]
     public string Phone { get; set; } = string.Empty;
 
-    [EmailAddress]
     [MaxLength(100)]
     public string? Email { get; set; }
 
@@ -50,4 +52,6 @@ public class BeekeeperApplication
     public string Status { get; set; } = "В обработка";
 
     public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
+
+    public DateTime? ReviewedAt { get; set; }
 }
