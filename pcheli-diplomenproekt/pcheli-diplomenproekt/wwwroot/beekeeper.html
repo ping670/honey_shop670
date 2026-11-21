@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Пчелар – Пчелари България</title>
+  <meta name="description" content="Запознайте се с пчеларя зад вашия мед: история, пчелин, продукти и отзиви.">
+  <meta name="theme-color" content="#140a05">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="pages.css">
+  <script>try{var th=localStorage.getItem('pchelari_theme');if(th)document.documentElement.dataset.theme=th;}catch(e){}</script>
+</head>
+<body class="page">
+  <header class="site-header"><div class="wrap">
+    <a class="brand" href="/">🐝 Пчелари България</a>
+    <nav>
+      <a href="/">Начало</a><a href="/#products">Каталог</a><a href="/blog">Блог</a><a href="/#beekeepers" class="current">Пчелари</a>
+      <span id="site-tools"></span>
+    </nav>
+  </div></header>
+
+  <main class="wrap" id="app" aria-live="polite"><p class="muted">Зареждане...</p></main>
+
+  <footer class="site-footer"><div class="wrap">© 2026 Пчелари България</div></footer>
+
+  <script src="i18n.js"></script>
+  <script src="common.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    const tr = (s) => window.I18N.t(s);
+    const esc = PB.esc;
+    const app = document.getElementById('app');
+    const id = parseInt(new URLSearchParams(location.search).get('id'), 10);
+
+    const stars = (n) => { n = Math.round(n); return '★'.repeat(n) + '☆'.repeat(5 - n); };
+
+    async function load() {
+      window.I18N.mountTools(document.getElementById('site-tools'));
+      if (!id) { app.innerHTML = `<div class="alert error">${esc(tr('Липсва пчелар.'))} <a href="/#beekeepers">${esc(tr('Към списъка'))}</a></div>`; return; }
+      try {
+        const d = await PB.api(`/beekeepers/${id}/detail`);
+        render(d);
+      } catch (ex) {
+        app.innerHTML = `<div class="alert error">${esc(ex.status === 404 ? tr('Пчеларят не е намерен.') : ex.message)} <a href="/#beekeepers">${esc(tr('Към списъка'))}</a></div>`;
+      }
+    }
+
+    function render(d) {
+      const b = d.beekeeper;
+      const en = window.I18N.lang === 'en';
+      document.title = `${b.apiaryName} – Пчелари България`;
+      // Мета данни за споделяне и търсачки (индексируемата версия е на /b/{id})
+      const setMeta = (sel, attr, val) => { let m = document.querySelector(sel); if (!m) { m = document.createElement('meta'); const [k, v] = sel.replace(/^meta\[|\]$/g, '').split('='); m.setAttribute(k, v.replace(/"/g, '')); document.head.appendChild(m); } m.setAttribute(attr, val); };
+      setMeta('meta[name="description"]', 'content', (b.bio || `${b.apiaryName} – ${b.region}`).slice(0, 200));
+      setMeta('meta[property="og:title"]', 'content', `${b.apiaryName} – Пчелари България`);
+      setMeta('meta[property="og:description"]', 'content', (b.bio || '').slice(0, 200));
+      let canon = document.querySelector('link[rel="canonical"]');
+      if (!canon) { canon = document.createElement('link'); canon.rel = 'canonical'; document.head.appendChild(canon); }
+      canon.href = `${location.origin}/b/${b.id}`;
+      const photo = PB.safeUrl(b.photoUrl, '');
+      const gallery = (d.apiaryPhotos || []).map((u) => PB.safeUrl(u, '')).filter(Boolean);
+      app.innerHTML = `
+        <section class="card bk-hero">
+          ${photo ? `<img class="bk-photo" src="${esc(photo)}" alt="${esc(b.fullName)}">` : `<div class="bk-photo" style="display:flex;align-items:center;justify-content:center;font-size:3rem">🐝</div>`}
+          <div style="flex:1;min-width:240px">
+            <h1 style="margin:0">${esc(b.apiaryName)}</h1>
+            <p class="muted" style="margin:4px 0 8px">${esc(b.fullName)} · 📍 ${esc(b.region)} (${esc(b.cityOrVillage)})</p>
+            <p style="margin:0 0 8px">
+              <span class="badge ${b.isVerified ? 'ok' : ''}">${b.isVerified ? '✓ ' + esc(tr('БАБХ проверен')) : esc(tr('Чака проверка'))}</span>
+              <span class="badge">📜 ${esc(b.registrationNumber)}</span>
+              <span class="badge">🐝 ${b.hiveCount} ${esc(tr('кошера'))}</span>
+              <span class="badge">⏳ ${b.experienceYears} ${esc(tr('г. опит'))}</span>
+            </p>
+            ${d.reviewCount ? `<p style="margin:0 0 8px"><span class="stars" aria-label="${d.averageRating.toFixed(1)} / 5">${stars(d.averageRating)}</span> ${d.averageRating.toFixed(1)} <span class="muted">(${d.reviewCount} ${esc(tr('отзива'))})</span></p>` : ''}
+            <a class="pbtn ghost small" href="tel:${esc(b.phone)}">📞 ${esc(b.phone)}</a>
+            <a class="pbtn ghost small" href="/contact.html?beekeeper=${b.id}">✉️ ${esc(tr('Пишете на пчеларя'))}</a>
+          </div>
+        </section>
+
+        <section class="card"><h2>${esc(tr('За пчеларя'))}</h2>
+          <p>${esc(b.bio || '')}</p>
+          ${d.story ? d.story.split(/\n{2,}/).map((p) => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`).join('') : ''}
+        </section>
+
+        ${gallery.length ? `<section class="card"><h2>${esc(tr('Пчелинът'))}</h2><div class="gallery">${gallery.map((u) => `<img src="${esc(u)}" alt="${esc(b.apiaryName)}" loading="lazy">`).join('')}</div></section>` : ''}
+
+        <section><h2>${esc(tr('Продукти'))}</h2>
+          ${d.products.length ? `<div class="grid cols-3">${d.products.map((p) => `<div class="card mini-product">
+            <img src="${esc(PB.safeUrl(p.image, './images/hero.png'))}" alt="${esc(p.name)}" loading="lazy">
+            <b>${esc(en && p.nameEn ? p.nameEn : p.name)}</b>
+            <span class="muted" style="font-size:.85rem">📍 ${esc(p.origin)}${p.batchNumber ? ' · ' + esc(tr('Партида')) + ' ' + esc(p.batchNumber) : ''}</span>
+            <span>${esc(tr('от'))} ${PB.money(Math.min(...p.variants.map((v) => v.price)))} ${p.inStock ? '' : `<span class="badge bad">${esc(tr('Изчерпано'))}</span>`}</span>
+            <a class="pbtn primary small" href="/#products" onclick="try{sessionStorage.setItem('pb_open_product','${p.id}')}catch(e){}">${esc(tr('Виж в каталога'))}</a></div>`).join('')}</div>` : `<p class="muted">${esc(tr('Все още няма публикувани продукти.'))}</p>`}
+        </section>
+
+        <section class="card" style="margin-top:16px"><h2>${esc(tr('Отзиви за продуктите на пчеларя'))}</h2>
+          ${d.reviews.length ? d.reviews.map((r) => `<div style="padding:10px 0;border-bottom:1px solid var(--amber-border)">
+            <span class="stars">${stars(r.rating)}</span> <b>${esc(r.authorName)}</b>${r.city ? ' <span class="muted">· ' + esc(r.city) + '</span>' : ''}
+            ${r.productName ? `<span class="muted"> · ${esc(r.productName)}</span>` : ''}
+            <p style="margin:4px 0 0">${esc(r.comment)}</p></div>`).join('') : `<p class="muted">${esc(tr('Все още няма отзиви.'))}</p>`}
+        </section>`;
+    }
+    load();
+    window.addEventListener('langchange', load);
+  })();
+  </script>
+  <script src="consent.js"></script>
+</body>
+</html>

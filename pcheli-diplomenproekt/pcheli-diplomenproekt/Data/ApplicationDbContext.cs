@@ -9,7 +9,7 @@ namespace pcheli_diplomenproekt.Data;
 /// Контекст на базата данни (Microsoft SQL Server). Наследява IdentityDbContext, така че таблиците
 /// на ASP.NET Core Identity (AspNetUsers, AspNetRoles…) са в същата база като данните на платформата.
 /// </summary>
-public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -25,10 +25,70 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     public DbSet<BeekeeperApplication> BeekeeperApplications => Set<BeekeeperApplication>();
     public DbSet<Review> Reviews => Set<Review>();
     public DbSet<PromoCode> PromoCodes => Set<PromoCode>();
+    public DbSet<OrderEvent> OrderEvents => Set<OrderEvent>();
+    public DbSet<SavedAddress> SavedAddresses => Set<SavedAddress>();
+    public DbSet<WishlistItem> WishlistItems => Set<WishlistItem>();
+    public DbSet<Subscription> Subscriptions => Set<Subscription>();
+    public DbSet<Article> Articles => Set<Article>();
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
+    public DbSet<NewsletterSubscriber> NewsletterSubscribers => Set<NewsletterSubscriber>();
+    public DbSet<StockAlert> StockAlerts => Set<StockAlert>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder); // Identity таблиците
+
+        modelBuilder.Entity<ContactMessage>(e =>
+        {
+            e.HasIndex(m => m.CreatedAt);
+            e.HasOne(m => m.Beekeeper).WithMany().HasForeignKey(m => m.BeekeeperId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<NewsletterSubscriber>(e =>
+        {
+            e.HasIndex(s => s.Email).IsUnique();
+            e.HasIndex(s => s.Token).IsUnique();
+        });
+
+        modelBuilder.Entity<StockAlert>(e =>
+        {
+            e.HasIndex(a => new { a.ProductId, a.Email }).IsUnique();
+            e.HasOne(a => a.Product).WithMany().HasForeignKey(a => a.ProductId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<OrderEvent>(e =>
+        {
+            e.HasIndex(x => x.OrderId);
+            e.HasOne(x => x.Order).WithMany(o => o.Events).HasForeignKey(x => x.OrderId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SavedAddress>(e => e.HasIndex(a => a.UserId));
+
+        modelBuilder.Entity<WishlistItem>(e =>
+        {
+            e.HasKey(w => new { w.UserId, w.ProductId });
+            e.HasOne(w => w.Product).WithMany().HasForeignKey(w => w.ProductId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Subscription>(e =>
+        {
+            e.HasIndex(s => s.UserId);
+            e.HasIndex(s => new { s.Status, s.NextDeliveryDate });
+            e.HasOne(s => s.ProductVariant).WithMany().HasForeignKey(s => s.ProductVariantId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Article>(e =>
+        {
+            e.HasIndex(a => a.Slug).IsUnique();
+            e.HasIndex(a => new { a.IsPublished, a.PublishedAt });
+        });
+
+        modelBuilder.Entity<AuditLog>(e =>
+        {
+            e.HasIndex(a => a.At);
+            e.HasIndex(a => a.UserName);
+        });
 
         modelBuilder.Entity<Region>(e =>
         {
@@ -39,6 +99,8 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         modelBuilder.Entity<Beekeeper>(e =>
         {
             e.HasIndex(b => b.RegistrationNumber).IsUnique();
+            e.HasIndex(b => b.UserId).IsUnique();   // един акаунт – един пчелин (NULL-овете не се броят)
+            e.HasOne<ApplicationUser>().WithMany().HasForeignKey(b => b.UserId).OnDelete(DeleteBehavior.SetNull);
             e.HasOne(b => b.Region)
                 .WithMany(r => r.Beekeepers)
                 .HasForeignKey(b => b.RegionId)
@@ -71,6 +133,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
         {
             e.HasIndex(o => o.OrderNumber).IsUnique();
             e.HasIndex(o => o.CreatedAt);
+            e.HasIndex(o => o.UserId);
             e.HasMany(o => o.Items)
                 .WithOne(i => i.Order)
                 .HasForeignKey(i => i.OrderId)

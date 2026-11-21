@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using pcheli_diplomenproekt.Data;
 using pcheli_diplomenproekt.Dtos;
+using pcheli_diplomenproekt.Models;
 
 namespace pcheli_diplomenproekt.Controllers;
 
@@ -11,16 +13,17 @@ namespace pcheli_diplomenproekt.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly SignInManager<IdentityUser> _signIn;
-    private readonly UserManager<IdentityUser> _users;
+    private readonly SignInManager<ApplicationUser> _signIn;
+    private readonly UserManager<ApplicationUser> _users;
     private readonly ILogger<AuthController> _logger;
 
-    public AuthController(SignInManager<IdentityUser> signIn, UserManager<IdentityUser> users, ILogger<AuthController> logger)
+    public AuthController(SignInManager<ApplicationUser> signIn, UserManager<ApplicationUser> users, ILogger<AuthController> logger)
     {
         _signIn = signIn; _users = users; _logger = logger;
     }
 
     [HttpPost("login")]
+    [EnableRateLimiting("auth")]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
         var user = await _users.FindByNameAsync(dto.Username.Trim());

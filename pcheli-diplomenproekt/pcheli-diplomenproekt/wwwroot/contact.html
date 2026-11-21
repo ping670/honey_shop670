@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Контакти – Пчелари България</title>
+  <meta name="description" content="Свържете се с Пчелари България – въпроси за поръчки, пчелари, сътрудничество и рекламации.">
+  <meta name="theme-color" content="#140a05">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="pages.css">
+  <script>try{var th=localStorage.getItem('pchelari_theme');if(th)document.documentElement.dataset.theme=th;}catch(e){}</script>
+</head>
+<body class="page">
+  <header class="site-header"><div class="wrap">
+    <a class="brand" href="/">🐝 Пчелари България</a>
+    <nav><a href="/">Начало</a><a href="/#products">Каталог</a><a href="/blog">Блог</a><a href="/contact.html" class="current">Контакти</a><span id="site-tools"></span></nav>
+  </div></header>
+
+  <main class="wrap">
+    <div class="legal-doc">
+      <h1>Контакти</h1>
+      <p class="muted">Имате въпрос за поръчка, продукт или искате да станете част от платформата? Пишете ни – отговаряме по имейл.</p>
+
+      <div class="grid cols-2">
+        <form class="card" id="contact-form" novalidate>
+          <h2 id="contact-title">Изпратете съобщение</h2>
+          <div id="to-beekeeper" class="alert hidden"></div>
+          <div class="field"><label for="c-name">Име</label><input id="c-name" autocomplete="name" maxlength="100" required></div>
+          <div class="field"><label for="c-email">Имейл</label><input id="c-email" type="email" autocomplete="email" maxlength="100" required></div>
+          <div class="field"><label for="c-phone">Телефон (по желание)</label><input id="c-phone" type="tel" autocomplete="tel" maxlength="30"></div>
+          <div class="field"><label for="c-subject">Тема</label><input id="c-subject" maxlength="150" required></div>
+          <div class="field"><label for="c-message">Съобщение</label><textarea id="c-message" maxlength="2000" rows="6" required></textarea><span class="hint">Ако пишете за поръчка, посочете нейния номер.</span></div>
+          <div id="c-cap"></div>
+          <div id="c-msg" role="alert" aria-live="polite"></div>
+          <button class="pbtn primary" type="submit" id="c-send">Изпрати</button>
+          <p class="hint muted" style="margin-top:10px;font-size:.8rem">С изпращането потвърждавате, че сте запознати с <a href="/privacy.html">Политиката за поверителност</a>.</p>
+        </form>
+
+        <div>
+          <address class="shop-card card">
+            <h2>Данни за контакт</h2>
+            <b data-shop="name">Пчелари България</b><br>
+            <span data-shop-row>Имейл: <a data-shop="email" href="#"></a><br></span>
+            <span data-shop-row>Телефон: <a data-shop="phone" href="#"></a><br></span>
+            <span data-shop-row>Адрес: <span data-shop="address"></span><br></span>
+            <span data-shop-row>ЕИК: <span data-shop="eik"></span></span>
+          </address>
+          <div class="card">
+            <h2>Полезни връзки</h2>
+            <ul style="padding-left:1.2em;margin:0">
+              <li><a href="/#track" onclick="location.href='/?track=1'; return false;">Проследи поръчка</a></li>
+              <li><a href="/delivery.html">Доставка и плащане</a></li>
+              <li><a href="/returns.html">Връщане и рекламации</a></li>
+              <li><a href="/account.html">Моят профил</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer"><div class="wrap">© 2026 Пчелари България</div></footer>
+  <script src="i18n.js"></script>
+  <script src="common.js"></script>
+  <script src="legal.js"></script>
+  <script src="contact.js"></script>
+  <script src="consent.js"></script>
+</body>
+</html>

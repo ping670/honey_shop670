@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using pcheli_diplomenproekt.Dtos;
 using pcheli_diplomenproekt.Services;
 
@@ -19,11 +21,18 @@ public class BeekeepersController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id) => Ok(await _beekeepers.GetByIdAsync(id));
 
-    // POST: api/beekeepers/apply – записва заявка „В обработка“; публикува се след одобрение от администратор
+    // GET: api/beekeepers/5/detail – страница на пчелара: история, снимки, продукти и отзиви
+    [HttpGet("{id:int}/detail")]
+    public async Task<IActionResult> GetDetail(int id) => Ok(await _beekeepers.GetDetailAsync(id));
+
+    // POST: api/beekeepers/apply – записва заявка „В обработка“; публикува се след одобрение от администратор.
+    // Ако кандидатът е влязъл в акаунта си, при одобрение получава достъп до личния панел на пчелара.
     [HttpPost("apply")]
+    [EnableRateLimiting("forms")]
+    [RequireCaptcha]
     public async Task<IActionResult> Apply([FromBody] BeekeeperApplyDto dto)
     {
-        await _beekeepers.SubmitApplicationAsync(dto);
+        await _beekeepers.SubmitApplicationAsync(dto, User.FindFirstValue(ClaimTypes.NameIdentifier));
         return Ok(new
         {
             success = true,

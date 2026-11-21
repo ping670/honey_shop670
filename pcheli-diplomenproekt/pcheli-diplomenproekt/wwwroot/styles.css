@@ -4683,9 +4683,108 @@ html { scroll-padding-top: 70px; }
 .unite-text .hero-unite-points li { font-size: 1.05rem; }
 .unite-text .hero-unite-stats { max-width: none; }
 
+/* Идеята вече е без карта: една колона */
+.unite-grid { grid-template-columns: minmax(0, 1fr); max-width: 900px; }
+
+/* Картата е отделен, по-голям слайд */
+.map-section {
+  position: relative;
+  background: #0E0905;
+  padding: 90px 0 70px;
+}
+.map-section .section-header { margin-bottom: 36px; }
+.hero-map.hero-map--large {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px;
+}
+.hero-map.gmap { padding: 10px; }
+
+/* ---- Leaflet карта с градовете с мед ---- */
+.honey-map {
+  width: 100%;
+  height: 560px;
+  border-radius: 16px;
+  isolation: isolate; /* панелите на Leaflet да не излизат над менюто */
+  z-index: 0;
+}
+.honey-marker { background: none; border: 0; }
+.honey-marker svg { filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.4)); transition: transform 0.15s; }
+.honey-marker:hover svg { transform: scale(1.12); }
+
+.hm-panel {
+  background: rgba(255, 247, 224, 0.95);
+  color: #2E1A06;
+  padding: 10px 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.hm-filter { display: block; cursor: pointer; font-weight: 600; }
+.hm-filter input { margin-right: 6px; accent-color: #B45309; }
+.hm-legend { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(74, 42, 8, 0.25); }
+.hm-legend span { display: flex; align-items: center; gap: 8px; }
+.hm-legend i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid #3A2106; flex-shrink: 0; }
+
+.hm-popup { color: #2E1A06; min-width: 160px; }
+.hm-popup h4 { margin: 0 0 6px; font-size: 1.05rem; }
+.hm-block { margin-top: 6px; }
+.hm-block ul { margin: 2px 0 0; padding-left: 18px; }
+
+@media (max-width: 700px) {
+  .honey-map { height: 440px; }
+  .hm-panel { font-size: 0.75rem; padding: 8px 10px; }
+}
+.gmap-frame {
+  display: block;
+  width: 100%;
+  height: 560px;
+  border: 0;
+  border-radius: 16px;
+}
+@media (max-width: 700px) { .gmap-frame { height: 420px; } }
+
+.region-chips {
+  max-width: 1100px;
+  margin: 24px auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+.region-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  background: rgba(36, 18, 10, 0.7);
+  color: #FFF;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, border-color 0.2s;
+}
+.region-chip small { font-size: 0.75rem; font-weight: 400; color: #FCD34D; }
+.region-chip.is-empty { border-style: dashed; }
+.region-chip.is-empty small { color: var(--text-muted); font-style: italic; }
+.region-chip:hover, .region-chip.is-active { background: rgba(245, 158, 11, 0.22); border-color: #F59E0B; transform: translateY(-2px); }
+
+.map-stats { max-width: 1100px; margin: 36px auto 0; }
+.hero-map--large .map-label { font-size: 14px; }
+.hero-map--large .map-count { font-size: 11px; }
+@media (max-width: 700px) {
+  .hero-map--large .map-label { font-size: 22px; }
+  .hero-map--large .map-count { font-size: 17px; }
+}
+
 @media (max-width: 960px) {
-  .unite-grid { grid-template-columns: 1fr; gap: 36px; }
   .unite-section { padding-top: 48px; }
+  .map-section { padding-top: 60px; }
+  .hero-map.hero-map--large { padding: 14px; }
 }
 
 /* ---- Телефон и таблет ---- */

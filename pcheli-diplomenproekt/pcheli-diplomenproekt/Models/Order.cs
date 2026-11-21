@@ -51,7 +51,37 @@ public class Order
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    /// <summary>Клиентът, ако е бил влязъл в акаунта си при поръчката.</summary>
+    [MaxLength(450)]
+    public string? UserId { get; set; }
+
+    /// <summary>„Наложен платеж“, „Чака плащане“, „Платена“ или „Неуспешно плащане“.</summary>
+    [MaxLength(30)]
+    public string PaymentStatus { get; set; } = "Наложен платеж";
+
+    [MaxLength(120)]
+    public string? StripeSessionId { get; set; }
+
+    [MaxLength(30)]
+    public string Courier { get; set; } = "Еконт";
+
+    /// <summary>„Офис“ или „Адрес“.</summary>
+    [MaxLength(20)]
+    public string DeliveryType { get; set; } = "Офис";
+
+    public bool IsGift { get; set; }
+
+    [MaxLength(300)]
+    public string? GiftMessage { get; set; }
+
+    /// <summary>Ако поръчката е създадена автоматично от абонамент.</summary>
+    public int? SubscriptionId { get; set; }
+
+    /// <summary>Наличностите вече са върнати (при отказ) – пази от двойно връщане.</summary>
+    public bool StockRestored { get; set; }
+
     public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
+    public ICollection<OrderEvent> Events { get; set; } = new List<OrderEvent>();
 }
 
 public class OrderItem

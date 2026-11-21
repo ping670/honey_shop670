@@ -50,7 +50,24 @@ public class Beekeeper
 
     public bool HasPollen { get; set; } = true;
 
+    /// <summary>false = пчеларят е скрит от публичния сайт (продуктите му не се показват и не могат да се поръчват).</summary>
+    public bool IsActive { get; set; } = true;
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    /// <summary>Свързаният потребителски акаунт (роля Beekeeper) – с него пчеларят влиза в личния си панел.</summary>
+    [MaxLength(450)]
+    public string? UserId { get; set; }
+
+    [MaxLength(250)]
+    public string PhotoUrl { get; set; } = string.Empty;
+
+    [MaxLength(3000)]
+    public string Story { get; set; } = string.Empty;
+
+    /// <summary>Снимки на пчелина – адреси, разделени с „;“.</summary>
+    [MaxLength(1500)]
+    public string ApiaryPhotos { get; set; } = string.Empty;
 
     public ICollection<Product> Products { get; set; } = new List<Product>();
 }

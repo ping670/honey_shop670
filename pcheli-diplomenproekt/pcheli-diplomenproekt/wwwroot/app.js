@@ -14,24 +14,31 @@ let VISIBLE_PRODUCTS = [];  // резултатът от филтрите (за�
 
 // --- Помощни функции за API ---
 async function apiFetch(path, options = {}) {
+  // Хедърите се сливат (напр. X-Captcha-*), а не се заместват
+  const { headers: extraHeaders, ...rest } = options;
   const res = await fetch(`${API_BASE_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options
+    credentials: 'same-origin',
+    ...rest,
+    headers: { 'Content-Type': 'application/json', ...(extraHeaders || {}) }
   });
   let data = null;
   try { data = await res.json(); } catch (e) { /* няма съдържание */ }
   if (!res.ok) {
-    const err = new Error(extractApiError(data) || `Грешка ${res.status}`);
+    const msg = res.status === 429 ? t('Твърде много опити. Изчакайте малко и опитайте отново.') : extractApiError(data);
+    const err = new Error(msg || `${t('Грешка')} ${res.status}`);
     err.status = res.status;
     throw err;
   }
   return data;
 }
 
+// Превод на текст (ако i18n.js е зареден) – иначе оригиналният български текст
+function t(text) { return window.I18N ? window.I18N.t(text) : text; }
+
 function extractApiError(data) {
   if (!data) return '';
   if (data.errors) return Object.values(data.errors).flat().join(' ');
-  return data.title || data.message || '';
+  return data.message || data.detail || data.title || '';
 }
 
 function mapApiBeekeeper(b) {
@@ -49,30 +56,39 @@ function mapApiBeekeeper(b) {
     rating: b.rating,
     isVerified: b.isVerified,
     hasHoney: b.hasHoney,
-    hasPollen: b.hasPollen
+    hasPollen: b.hasPollen,
+    photoUrl: PB.safeUrl(b.photoUrl, '')
   };
 }
 
 function mapApiProduct(p) {
   const bk = p.beekeeper;
+  const en = window.I18N && window.I18N.lang === 'en';
   return {
     id: String(p.id),
     beekeeperId: bk ? bk.id : null,
     producer: bk ? `${escapeHtml(bk.apiaryName)} (${escapeHtml(bk.fullName)})` : 'Български Пчелин',
     babh: bk ? escapeHtml(bk.registrationNumber) : 'БАБХ Сертифициран',
     phone: bk ? escapeHtml(bk.phone) : '',
-    name: escapeHtml(p.name),
+    name: escapeHtml(en && p.nameEn ? p.nameEn : p.name),
     type: p.type,
     category: p.category,
     origin: escapeHtml(p.origin),
     tag: escapeHtml(p.tag),
-    image: escapeHtml(p.image),
-    description: escapeHtml(p.description),
+    image: escapeHtml(PB.safeUrl(p.image, './images/hero.png')),
+    description: escapeHtml(en && p.descriptionEn ? p.descriptionEn : p.description),
+    // произход и проследимост
+    contents: escapeHtml(p.contents),
+    batchNumber: escapeHtml(p.batchNumber),
+    harvestYear: p.harvestYear,
+    labSummary: escapeHtml(p.labSummary),
+    labReportUrl: PB.safeUrl(p.labReportUrl, ''),
+    certificates: escapeHtml(p.certificates),
     specs: { color: escapeHtml(p.color), aroma: escapeHtml(p.aroma), crystallization: escapeHtml(p.crystallization) },
     harvestDate: escapeHtml(p.harvestDate),
     pollenPurity: escapeHtml(p.purity),
     tastingNotes: escapeHtml(p.tastingNotes),
-    sizes: p.variants.map(v => ({ variantId: v.id, label: escapeHtml(v.label), weight: v.weight, price: Number(v.price), inStock: v.inStock })),
+    sizes: p.variants.map(v => ({ variantId: v.id, label: escapeHtml(v.label), weight: v.weight, price: Number(v.price), inStock: v.inStock, stock: v.stock })),
     rating: p.rating,
     inStock: p.inStock,
     quizMatch: p.quizTags || []
@@ -117,6 +133,14 @@ let activeFilterCategory = 'all';
 let activeFilterType = 'all';
 let activeFilterRegion = 'all';
 let activeSearchQuery = '';
+let activeSort = '';          // '', price-asc, price-desc, name, new, rating
+let activeMinPrice = '';
+let activeMaxPrice = '';
+let activeInStockOnly = false;
+let activeWishlistOnly = false;
+let currentPage = 1;
+let totalProducts = 0;
+const PAGE_SIZE = 9;
 let appliedDiscount = 0;
 let appliedPromoCode = null;
 let selectedPaymentMethodName = '💵 Наложен Платеж (при доставка)';
@@ -131,6 +155,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.lucide) lucide.createIcons();
 
   initData();
+
+  // При смяна на езика каталогът се зарежда наново (имената и описанията идват от API-то)
+  window.addEventListener('langchange', () => { loadCatalog(); loadBeekeepers(); renderUserReviews(); renderQuizStep(); updateCartUI(); });
 });
 
 function showLoadError(containerId, message, retryFn) {
@@ -170,17 +197,36 @@ async function loadCatalog() {
 
 // Филтриран каталог – филтрирането се прави от API-то чрез query параметри
 let productsRequestId = 0;
-async function loadProducts() {
+async function loadProducts(keepPage) {
   const requestId = ++productsRequestId;
+  if (keepPage !== true) currentPage = 1;   // нов филтър – започваме от първата страница
+
+  // „Само любими“ е клиентски филтър върху пълния каталог
+  if (activeWishlistOnly) {
+    VISIBLE_PRODUCTS = PRODUCTS_DATA.filter(p => PB.wishlist.has(p.id));
+    totalProducts = VISIBLE_PRODUCTS.length;
+    renderProducts();
+    return;
+  }
+
   const params = new URLSearchParams();
   if (activeFilterType !== 'all') params.set('type', activeFilterType);
   if (activeFilterCategory !== 'all') params.set('category', activeFilterCategory);
   if (activeFilterRegion !== 'all') params.set('region', activeFilterRegion);
   if (activeSearchQuery) params.set('search', activeSearchQuery);
+  if (activeSort) params.set('sort', activeSort);
+  if (activeMinPrice !== '') params.set('minPrice', activeMinPrice);
+  if (activeMaxPrice !== '') params.set('maxPrice', activeMaxPrice);
+  if (activeInStockOnly) params.set('inStock', 'true');
+  params.set('page', currentPage);
+  params.set('pageSize', PAGE_SIZE);
 
   try {
-    const data = await apiFetch('/products' + (params.toString() ? `?${params}` : ''));
+    const res = await fetch(`${API_BASE_URL}/products?${params}`, { credentials: 'same-origin' });
+    if (!res.ok) throw new Error(`${t('Грешка')} ${res.status}`);
+    const data = await res.json();
     if (requestId !== productsRequestId) return; // получен е по-нов отговор
+    totalProducts = parseInt(res.headers.get('X-Total-Count') || String(data.length), 10);
     VISIBLE_PRODUCTS = data.map(mapApiProduct);
     renderProducts();
   } catch (err) {
@@ -220,17 +266,23 @@ function updateHeroStats() {
   animateCount(document.getElementById('hero-stat-hives'),
     BEEKEEPERS_DATA.reduce((sum, b) => sum + (Number(b.hiveCount) || 0), 0));
 
-  document.querySelectorAll('.map-node').forEach(node => {
+  document.querySelectorAll('.region-chip').forEach(node => {
     const n = perRegion[node.dataset.region] || 0;
     node.classList.toggle('is-empty', n === 0);
-    const label = node.querySelector('.map-count');
+    const label = node.querySelector('[data-region-count]');
     if (label) label.textContent = n ? beekeeperWord(n) : 'очаква първия пчелар';
   });
 }
 
 function setupHeroMap() {
-  document.querySelectorAll('.map-node').forEach(node => {
+  const frame = document.getElementById('google-map');
+  document.querySelectorAll('.region-chip').forEach(node => {
     const open = () => {
+      if (frame && node.dataset.mapQ) {
+        frame.src = 'https://www.google.com/maps?q=' + encodeURIComponent(node.dataset.mapQ) + '&z=9&output=embed&hl=bg';
+      }
+      document.querySelectorAll('.region-chip.is-active').forEach(c => c.classList.remove('is-active'));
+      node.classList.add('is-active');
       if (node.classList.contains('is-empty')) {
         showToast(`🐝 В ${node.dataset.region} още няма пчелар. Ако сте пчелар оттам, присъединете се!`);
         window.openBeekeeperModal();
@@ -239,7 +291,6 @@ function setupHeroMap() {
       }
     };
     node.addEventListener('click', open);
-    node.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
   });
 }
 
@@ -260,8 +311,9 @@ function reconcileCart() {
   cartState = cartState.filter(item => {
     const prod = PRODUCTS_DATA.find(p => p.id === String(item.id));
     const size = prod && prod.sizes.find(s => s.variantId === item.variantId);
-    if (!size) return false;
+    if (!size || !size.inStock || size.stock <= 0) return false;   // изчерпаните се махат от количката
     item.price = size.price;
+    item.qty = Math.min(item.qty, size.stock, 50);
     return true;
   });
   saveCart();
@@ -308,78 +360,129 @@ function renderProducts() {
   if (!grid) return;
 
   const filtered = VISIBLE_PRODUCTS;
+  renderCatalogCount();
 
   if (filtered.length === 0) {
     grid.innerHTML = `
       <div style="grid-column: 1 / -1; text-align: center; padding: 45px 20px; background: rgba(26, 13, 8, 0.5); border: 1px dashed rgba(245, 158, 11, 0.3); border-radius: 16px;">
         <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">🐝</span>
-        <h3 style="color: #FFF; font-size: 1.2rem; margin-bottom: 6px;">Няма намерени продукти по тези критерии</h3>
-        <p style="color: var(--text-soft); max-width: 440px; margin: 0 auto 16px; font-size: 0.9rem;">Опитайте да изчистите филтрите или напишете друг регион.</p>
-        <button class="btn btn-outline" onclick="resetFilters()">Изчисти филтрите</button>
+        <h3 style="font-size: 1.2rem; margin-bottom: 6px;">${t('Няма намерени продукти по тези критерии')}</h3>
+        <p style="color: var(--text-soft); max-width: 440px; margin: 0 auto 16px; font-size: 0.9rem;">${t('Опитайте да изчистите филтрите или напишете друг регион.')}</p>
+        <button class="btn btn-outline" onclick="resetFilters()">${t('Изчисти филтрите')}</button>
       </div>
     `;
+    renderPager();
     return;
   }
 
   grid.innerHTML = filtered.map(p => {
     const isPollen = p.type === "Пчелен прашец";
-    const typeIcon = isPollen ? "🌼" : "🍯";
+    const typeIcon = isPollen ? "🌼" : (p.type === "Подаръчен комплект" ? "🎁" : "🍯");
     const producerText = p.producer || "Сертифициран Български Пчелин";
     const babhText = p.babh || "БАБХ Регистрация";
     const phoneContact = p.phone || "0888 123 456";
+    const stockHtml = stockNote(p.sizes[0]);
+    const firstAvailable = Math.max(0, p.sizes.findIndex(s => s.inStock));
+    const producerHtml = p.beekeeperId
+      ? `<a href="beekeeper.html?id=${p.beekeeperId}" class="product-producer-name" style="text-decoration:none;" title="${t('Профил на пчеларя')}">👨‍🌾 ${producerText}</a>`
+      : `<span class="product-producer-name">👨‍🌾 ${producerText}</span>`;
 
     return `
       <div class="product-card" id="card-${p.id}">
         <div class="product-img-wrapper" onclick="openQuickView('${p.id}')">
           <span class="product-tag" style="${isPollen ? 'background: #D97706;' : ''}">${typeIcon} ${p.tag}</span>
-          <img src="${p.image}" alt="${p.name}" class="product-img">
-          <button class="product-quickview-btn" title="Преглед"><i data-lucide="eye"></i></button>
+          <img src="${p.image}" alt="${p.name}" class="product-img" loading="lazy">
+          <button class="product-quickview-btn" title="${t('Преглед')}"><i data-lucide="eye"></i></button>
           <span class="product-origin-tag">📍 ${p.origin}</span>
         </div>
+        <button type="button" class="heart-btn" data-heart="${p.id}" aria-label="${t('Любими')}" aria-pressed="false" title="${t('Добави в любими')}">♡</button>
         <div class="product-body">
           <h3 class="product-title">${p.name}</h3>
-          
+
           <div class="product-producer-box">
-            <span class="product-producer-name">👨‍🌾 ${producerText}</span>
+            ${producerHtml}
             <span class="product-babh-tag">${babhText}</span>
           </div>
 
           <p class="product-desc">${p.description}</p>
 
           <div style="margin: 8px 0 10px; display: flex; justify-content: space-between; align-items: center;">
-            <a href="tel:${phoneContact}" class="product-beekeeper-contact" title="Обадете се на пчеларя">
-              <span>📞 Пчелар: <strong>${phoneContact}</strong></span>
+            <a href="tel:${phoneContact}" class="product-beekeeper-contact" title="${t('Обадете се на пчеларя')}">
+              <span>📞 ${t('Пчелар')}: <strong>${phoneContact}</strong></span>
             </a>
           </div>
 
           <select class="product-size-select" id="size-select-${p.id}" onchange="updateProductPrice('${p.id}')">
             ${p.sizes.map((s, index) => `
-              <option value="${index}">${s.label} — ${s.price.toFixed(2)} €</option>
+              <option value="${index}" ${index === firstAvailable ? 'selected' : ''} ${s.inStock ? '' : 'disabled'}>${s.label} — ${s.price.toFixed(2)} €${s.inStock ? '' : ' (' + t('изчерпано') + ')'}</option>
             `).join('')}
           </select>
+          <div class="stock-note ${stockHtml.cls}" id="stock-note-${p.id}">${stockHtml.text}</div>
 
           <div class="product-footer">
             <div class="product-price" id="price-display-${p.id}">
-              ${p.sizes[0].price.toFixed(2)} <span>€</span>
+              ${p.sizes[firstAvailable].price.toFixed(2)} <span>€</span>
             </div>
 
-            <button class="btn btn-primary" onclick="handleAddToCart('${p.id}')">
-              <i data-lucide="shopping-bag"></i> В Количката
+            <button class="btn btn-primary" id="add-btn-${p.id}" onclick="handleAddToCart('${p.id}')" ${p.inStock ? '' : 'disabled'}>
+              <i data-lucide="shopping-bag"></i> ${p.inStock ? t('В Количката') : t('Изчерпано')}
             </button>
           </div>
+          ${p.inStock ? '' : `<a class="notify-link" href="/p/${p.id}#alert-form" style="display:block;margin-top:8px;font-size:.85rem;text-align:center">🔔 ${t('Уведоми ме, когато е наличен')}</a>`}
         </div>
       </div>
     `;
   }).join('');
 
   if (window.lucide) lucide.createIcons();
+  renderPager();
+  if (typeof window.afterProductsRender === 'function') window.afterProductsRender();
 }
+
+// Бележка за наличността на избрана опаковка
+function stockNote(size) {
+  if (!size || !size.inStock || size.stock <= 0) return { cls: 'out', text: `❌ ${t('Изчерпано')}` };
+  if (size.stock <= 10) return { cls: 'low', text: `⚠️ ${t('Остават само')} ${size.stock} ${t('бр.')}` };
+  return { cls: '', text: '' };
+}
+
+function renderCatalogCount() {
+  const el = document.getElementById('catalog-count');
+  if (el) el.textContent = totalProducts > 0 ? `${t('Намерени продукти')}: ${totalProducts}` : '';
+}
+
+// Странициране на каталога
+function renderPager() {
+  const host = document.getElementById('catalog-pager');
+  if (!host) return;
+  const pages = Math.ceil(totalProducts / PAGE_SIZE);
+  if (activeWishlistOnly || pages <= 1) { host.innerHTML = ''; return; }
+  const btn = (label, page, extra = '') => `<button type="button" ${extra} onclick="goToPage(${page})">${label}</button>`;
+  let html = btn('‹', currentPage - 1, currentPage === 1 ? 'disabled aria-label="' + t('Предишна') + '"' : 'aria-label="' + t('Предишна') + '"');
+  for (let i = 1; i <= pages; i++) {
+    html += i === currentPage ? `<button type="button" class="current" aria-current="page">${i}</button>` : btn(i, i);
+  }
+  html += btn('›', currentPage + 1, currentPage === pages ? 'disabled aria-label="' + t('Следваща') + '"' : 'aria-label="' + t('Следваща') + '"');
+  host.innerHTML = html;
+}
+
+window.goToPage = function(page) {
+  currentPage = page;
+  loadProducts(true);
+  document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
+};
 
 window.resetFilters = function() {
   activeFilterType = 'all';
   activeFilterCategory = 'all';
   activeFilterRegion = 'all';
   activeSearchQuery = '';
+  activeSort = '';
+  activeMinPrice = '';
+  activeMaxPrice = '';
+  activeInStockOnly = false;
+  activeWishlistOnly = false;
+  if (typeof window.resetCatalogToolbar === 'function') window.resetCatalogToolbar();
 
   const searchInput = document.getElementById('catalog-search-input');
   if (searchInput) searchInput.value = '';
@@ -404,6 +507,12 @@ function updateProductPrice(productId) {
     const selectedSizeIndex = parseInt(select.value);
     const sizeObj = product.sizes[selectedSizeIndex];
     priceDisplay.innerHTML = `${sizeObj.price.toFixed(2)} <span>€</span>`;
+
+    const note = stockNote(sizeObj);
+    const noteEl = document.getElementById(`stock-note-${productId}`);
+    if (noteEl) { noteEl.className = `stock-note ${note.cls}`; noteEl.textContent = note.text; }
+    const addBtn = document.getElementById(`add-btn-${productId}`);
+    if (addBtn) addBtn.disabled = !sizeObj.inStock;
   }
 }
 
@@ -432,7 +541,8 @@ window.openQuickView = function(productId) {
           <strong style="color: #FCD34D;">Телефон за връзка:</strong> <a href="tel:${product.phone || '0888123456'}" style="color:#FFF;">${product.phone || '0888 123 456'}</a>
         </div>
         <p style="color:var(--text-muted); margin-bottom:15px; font-size:0.92rem; line-height:1.5;">${product.description}</p>
-        
+        ${provenanceHtml(product)}
+
         <div style="background:rgba(26, 13, 8, 0.85); border:1px solid var(--amber-border); padding:12px 14px; border-radius:var(--radius-sm); margin-bottom:15px; color:var(--text-soft); font-size:0.86rem;">
           <p style="margin-bottom:5px;"><strong>Вкус и аромат:</strong> ${product.tastingNotes}</p>
           <p style="margin-bottom:5px;"><strong>Качество:</strong> ${product.pollenPurity}</p>
@@ -443,9 +553,16 @@ window.openQuickView = function(productId) {
           <span style="font-size:1.6rem; font-weight:700; font-family:var(--font-serif);" class="text-gold">
             ${product.sizes[0].price.toFixed(2)} €
           </span>
-          <button class="btn btn-primary btn-lg quickview-buy-btn" onclick="handleAddToCart('${product.id}'); document.getElementById('quickview-modal').classList.remove('active');">
-            <i data-lucide="shopping-bag"></i> Добави в Количката
+          <button class="btn btn-primary btn-lg quickview-buy-btn" ${product.inStock ? '' : 'disabled'} onclick="handleAddToCart('${product.id}'); document.getElementById('quickview-modal').classList.remove('active');">
+            <i data-lucide="shopping-bag"></i> ${product.inStock ? t('Добави в Количката') : t('Изчерпано')}
           </button>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+          <button type="button" class="pbtn ghost small" data-heart="${product.id}" aria-pressed="false">♡ ${t('Любими')}</button>
+          ${product.type === 'Подаръчен комплект' ? '' : `<button type="button" class="pbtn ghost small" onclick="window.openSubscribeModal && window.openSubscribeModal('${product.id}')">🔁 ${t('Абонирай се')} (−${(window.PB_SUB_DISCOUNT || 5)}%)</button>`}
+          ${product.beekeeperId ? `<a class="pbtn ghost small" href="beekeeper.html?id=${product.beekeeperId}">👨‍🌾 ${t('Профил на пчеларя')}</a>` : ''}
+          ${product.inStock ? '' : `<a class="pbtn ghost small" href="/p/${product.id}#alert-form">🔔 ${t('Уведоми ме, когато е наличен')}</a>`}
+          <a class="pbtn ghost small" href="/p/${product.id}" target="_blank" rel="noopener">🔗 ${t('Страница на продукта')}</a>
         </div>
       </div>
     </div>
@@ -453,7 +570,21 @@ window.openQuickView = function(productId) {
 
   modal.classList.add('active');
   if (window.lucide) lucide.createIcons();
+  if (typeof window.afterProductsRender === 'function') window.afterProductsRender();
 };
+
+// Блок „Произход и проследимост“ – партида, година на реколта, сертификати и лабораторен протокол (само това, което е въведено)
+function provenanceHtml(p) {
+  const rows = [];
+  if (p.batchNumber) rows.push([t('Партида'), p.batchNumber]);
+  if (p.harvestYear) rows.push([t('Реколта'), p.harvestYear]);
+  if (p.contents) rows.push([t('Състав'), p.contents]);
+  if (p.certificates) rows.push([t('Сертификати'), p.certificates]);
+  if (p.labSummary) rows.push([t('Лабораторен анализ'), p.labSummary]);
+  if (p.labReportUrl) rows.push([t('Протокол'), `<a href="${p.labReportUrl}" target="_blank" rel="noopener noreferrer">${t('Отвори протокола')} ↗</a>`]);
+  if (!rows.length) return '';
+  return `<div class="provenance"><h5>🔎 ${t('Произход и проследимост')}</h5><dl>${rows.map(r => `<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('')}</dl></div>`;
+}
 
 // --- Списък с производители ---
 function renderBeekeepers() {
@@ -464,7 +595,7 @@ function renderBeekeepers() {
     <div class="beekeeper-card">
       <div class="beekeeper-header">
         <div>
-          <h3 class="beekeeper-name">${b.fullName}</h3>
+          <h3 class="beekeeper-name"><a href="beekeeper.html?id=${b.id}" style="color:inherit;text-decoration:none;">${b.fullName}</a></h3>
           <div class="beekeeper-apiary">🏡 ${b.apiaryName}</div>
         </div>
         <span class="beekeeper-badge-verified">✓ БАБХ Проверен</span>
@@ -483,6 +614,9 @@ function renderBeekeepers() {
         <span class="beekeeper-products-count">
           ${b.hasHoney ? '🍯 Мед' : ''} ${b.hasPollen ? '• 🌼 Прашец' : ''}
         </span>
+        <a href="beekeeper.html?id=${b.id}" class="btn btn-outline" style="padding: 6px 14px; font-size: 0.82rem;">
+          <span>${t('Профил')}</span>
+        </a>
         <a href="tel:${b.phone}" class="btn btn-outline" style="padding: 6px 14px; font-size: 0.82rem;">
           <span>📞 ${b.phone}</span>
         </a>
@@ -520,6 +654,7 @@ window.handleBeekeeperSubmit = async function() {
   try {
     const res = await apiFetch('/beekeepers/apply', {
       method: 'POST',
+      headers: captchaHeaders('beekeeper'),
       body: JSON.stringify({
         fullName: name,
         apiaryName: apiary,
@@ -539,6 +674,8 @@ window.handleBeekeeperSubmit = async function() {
     showToast(`🎉 ${res.message}`);
   } catch (err) {
     showToast(`❌ ${err.message}`);
+  } finally {
+    reloadCaptcha('beekeeper');
   }
 };
 
@@ -548,13 +685,22 @@ function handleAddToCart(productId) {
   if (!product) return;
 
   const select = document.getElementById(`size-select-${productId}`);
-  const selectedSizeIndex = select ? parseInt(select.value) : 0;
+  const selectedSizeIndex = select ? parseInt(select.value) : Math.max(0, product.sizes.findIndex(s => s.inStock));
   const sizeObj = product.sizes[selectedSizeIndex] || product.sizes[0];
+
+  if (!sizeObj.inStock || sizeObj.stock <= 0) {
+    showToast(`❌ ${t('Тази опаковка е изчерпана.')}`);
+    return;
+  }
 
   const cartItemId = `${product.id}_${sizeObj.variantId}`;
   const existing = cartState.find(item => item.cartItemId === cartItemId);
 
   if (existing) {
+    if (existing.qty + 1 > sizeObj.stock) {
+      showToast(`⚠️ ${t('В наличност има само')} ${sizeObj.stock} ${t('бр.')}`);
+      return;
+    }
     existing.qty += 1;
   } else {
     cartState.push({
@@ -573,7 +719,7 @@ function handleAddToCart(productId) {
 
   saveCart();
   updateCartUI();
-  showToast(`🍯 Добавено: ${product.name}`);
+  showToast(`🍯 ${t('Добавено')}: ${product.name}`);
   openCartDrawer();
 }
 
@@ -581,7 +727,53 @@ function saveCart() {
   localStorage.setItem('pchelari_bg_cart', JSON.stringify(cartState));
 }
 
-function updateCartUI() {
+// --- Оценка на сумата от сървъра (цени, отстъпка, куриер) ---
+let selectedCourier = 'Еконт';
+let selectedDeliveryType = 'Офис';
+let lastQuote = null;      // { sig, subtotal, discount, shipping, total, freeShippingFrom }
+let pendingQuoteSig = '';
+let quoteTimer = null;
+
+function cartSignature() {
+  return JSON.stringify([selectedCourier, selectedDeliveryType, appliedPromoCode || '', cartState.map(i => [i.variantId, i.qty])]);
+}
+
+function requestQuote() {
+  if (cartState.length === 0) { lastQuote = null; return; }
+  const sig = cartSignature();
+  if ((lastQuote && lastQuote.sig === sig) || pendingQuoteSig === sig) return;
+  pendingQuoteSig = sig;
+  clearTimeout(quoteTimer);
+  quoteTimer = setTimeout(async () => {
+    try {
+      const q = await apiFetch('/orders/quote', {
+        method: 'POST',
+        body: JSON.stringify({
+          courier: selectedCourier,
+          deliveryType: selectedDeliveryType,
+          promoCode: appliedPromoCode,
+          items: cartState.map(i => ({ productVariantId: i.variantId, quantity: i.qty }))
+        })
+      });
+      if (cartSignature() !== sig) return;   // количката е сменена междувременно
+      lastQuote = { sig, ...q };
+    } catch (err) {
+      lastQuote = null;
+      showToast(`⚠️ ${err.message}`);
+    } finally {
+      if (pendingQuoteSig === sig) pendingQuoteSig = '';
+    }
+    updateCartUI(true);
+  }, 150);
+}
+
+window.setDelivery = function(courier, deliveryType) {
+  selectedCourier = courier;
+  selectedDeliveryType = deliveryType;
+  updateCartUI();
+};
+
+function updateCartUI(fromQuote) {
   const countBadge = document.getElementById('cart-badge');
   const drawerCount = document.getElementById('cart-drawer-count');
   const itemsContainer = document.getElementById('cart-items-container');
@@ -596,22 +788,28 @@ function updateCartUI() {
   if (countBadge) countBadge.textContent = totalQty;
   if (drawerCount) drawerCount.textContent = totalQty;
 
-  const subtotal = cartState.reduce((sum, item) => sum + (item.price * item.qty), 0);
-  const discountVal = subtotal * appliedDiscount;
-  const netTotal = subtotal - discountVal;
-
-  // Сумите са в евро и съвпадат с OrderService.FreeShippingThreshold / ShippingCost на сървъра.
-  const FREE_SHIPPING_THRESHOLD = 25.00;
-  const SHIPPING_COST = 3.00;
-  let shippingCost = netTotal >= FREE_SHIPPING_THRESHOLD || netTotal === 0 ? 0 : SHIPPING_COST;
+  // Временна прогноза в браузъра; щом дойде оценката от сървъра, показваме нея (тя е окончателната).
+  const useQuote = lastQuote && lastQuote.sig === cartSignature();
+  let subtotal = cartState.reduce((sum, item) => sum + (item.price * item.qty), 0);
+  let discountVal = subtotal * appliedDiscount;
+  let netTotal = subtotal - discountVal;
+  const FREE_SHIPPING_THRESHOLD = useQuote ? Number(lastQuote.freeShippingFrom) : 25.00;
+  let shippingCost = netTotal >= FREE_SHIPPING_THRESHOLD || netTotal === 0 ? 0 : 3.00;
+  if (useQuote) {
+    subtotal = Number(lastQuote.subtotal);
+    discountVal = Number(lastQuote.discount);
+    netTotal = subtotal - discountVal;
+    shippingCost = Number(lastQuote.shipping);
+  }
+  if (!fromQuote) requestQuote();
 
   if (itemsContainer) {
     if (cartState.length === 0) {
       itemsContainer.innerHTML = `
         <div class="text-center" style="padding: 40px 0; color:var(--text-muted);">
           <div style="font-size:2.5rem; margin-bottom:8px;">🍯</div>
-          <p>Количката ви е празна</p>
-          <a href="#products" class="btn btn-outline" style="margin-top:12px;" onclick="closeCartDrawer()">Към Каталога</a>
+          <p>${t('Количката ви е празна')}</p>
+          <a href="#products" class="btn btn-outline" style="margin-top:12px;" onclick="closeCartDrawer()">${t('Към Каталога')}</a>
         </div>
       `;
     } else {
@@ -638,10 +836,10 @@ function updateCartUI() {
 
   if (shippingBanner) {
     if (netTotal >= FREE_SHIPPING_THRESHOLD || netTotal === 0) {
-      shippingBanner.innerHTML = `✅ Поръчката ви е с <strong>БЕЗПЛАТНА доставка</strong> за България!`;
+      shippingBanner.innerHTML = `✅ ${t('Поръчката ви е с')} <strong>${t('БЕЗПЛАТНА доставка')}</strong> ${t('за България!')}`;
     } else {
       const remaining = FREE_SHIPPING_THRESHOLD - netTotal;
-      shippingBanner.innerHTML = `🚚 Добавете още <strong>${remaining.toFixed(2)} €</strong> за БЕЗПЛАТНА доставка!`;
+      shippingBanner.innerHTML = `🚚 ${t('Добавете още')} <strong>${remaining.toFixed(2)} €</strong> ${t('за БЕЗПЛАТНА доставка!')}`;
     }
   }
 
@@ -656,12 +854,15 @@ function updateCartUI() {
     }
   }
 
-  if (shippingEl) shippingEl.textContent = shippingCost === 0 ? 'БЕЗПЛАТНА' : `${shippingCost.toFixed(2)} €`;
+  if (shippingEl) shippingEl.textContent = shippingCost === 0 ? t('БЕЗПЛАТНА') : `${shippingCost.toFixed(2)} €`;
   const grandTotal = netTotal + shippingCost;
   if (totalEl) totalEl.textContent = `${grandTotal.toFixed(2)} €`;
 
   const ckTotal = document.getElementById('ck-summary-total');
   if (ckTotal) ckTotal.textContent = `${grandTotal.toFixed(2)} €`;
+  if (typeof window.renderQuoteLines === 'function') {
+    window.renderQuoteLines({ subtotal, discount: discountVal, shipping: shippingCost, exact: !!useQuote });
+  }
 
   if (window.lucide) lucide.createIcons();
 }
@@ -673,6 +874,13 @@ function changeQty(cartItemId, delta) {
     if (item.qty <= 0) {
       removeItem(cartItemId);
       return;
+    }
+    const prod = PRODUCTS_DATA.find(p => p.id === String(item.id));
+    const size = prod && prod.sizes.find(s => s.variantId === item.variantId);
+    const max = Math.min(50, size ? size.stock : 50);
+    if (item.qty > max) {
+      item.qty = max;
+      showToast(`⚠️ ${t('В наличност има само')} ${max} ${t('бр.')}`);
     }
     saveCart();
     updateCartUI();
@@ -727,6 +935,10 @@ window.handleCheckoutSubmit = async function() {
   const submitBtn = document.querySelector('#checkout-form button[type="submit"]');
   if (submitBtn) submitBtn.disabled = true;
 
+  const payType = document.querySelector('input[name="payment"]:checked')?.value === 'card' ? 'card' : 'cod';
+  const isGift = !!document.getElementById('ck-gift')?.checked;
+  selectedPaymentMethodName = payType === 'card' ? '💳 Банкова карта (онлайн)' : '💵 Наложен Платеж (при доставка)';
+
   try {
     // Сървърът сам изчислява цените, отстъпката, доставката и общата сума
     const result = await apiFetch('/orders', {
@@ -738,6 +950,11 @@ window.handleCheckoutSubmit = async function() {
         deliveryCity: city,
         deliveryAddress: address,
         paymentMethod: selectedPaymentMethodName,
+        paymentType: payType,
+        courier: selectedCourier,
+        deliveryType: selectedDeliveryType,
+        isGift,
+        giftMessage: isGift ? (document.getElementById('ck-gift-msg')?.value.trim() || null) : null,
         promoCode: appliedPromoCode,
         items: cartState.map(i => ({ productVariantId: i.variantId, quantity: i.qty }))
       })
@@ -753,19 +970,34 @@ window.handleCheckoutSubmit = async function() {
     if (receiptPayment) receiptPayment.textContent = selectedPaymentMethodName;
     if (receiptTotal) receiptTotal.textContent = `${Number(result.total).toFixed(2)} €`;
 
-    showToast(`🎉 Поръчка #${result.orderNumber} е регистрирана успешно!`);
-
+    // Поръчката е създадена и количеството е резервирано – количката се изчиства
     cartState = [];
     appliedDiscount = 0;
     appliedPromoCode = null;
+    lastQuote = null;
     saveCart();
     updateCartUI();
-
     document.getElementById('checkout-modal')?.classList.remove('active');
+    if (typeof window.refreshCatalogStock === 'function') window.refreshCatalogStock();
+
+    if (result.requiresPayment) {
+      // Онлайн плащане: пренасочване към Stripe Checkout
+      showToast(`💳 ${t('Пренасочваме ви към плащане...')}`);
+      try {
+        const session = await apiFetch('/payments/checkout', { method: 'POST', body: JSON.stringify({ orderNumber: result.orderNumber, phone }) });
+        window.location.href = session.url;
+        return;
+      } catch (payErr) {
+        showToast(`⚠️ ${t('Поръчката е записана, но плащането не стартира')}: ${payErr.message}. ${t('Можете да платите при доставка – свържете се с нас.')}`);
+      }
+    } else {
+      showToast(`🎉 ${t('Поръчка')} #${result.orderNumber} ${t('е регистрирана успешно!')}`);
+    }
     document.getElementById('success-modal')?.classList.add('active');
   } catch (err) {
     // Количката се запазва, за да може клиентът да опита отново
-    showToast(`❌ Поръчката не беше приета: ${err.message}`);
+    showToast(`❌ ${t('Поръчката не беше приета')}: ${err.message}`);
+    if (err.status === 409 || err.status === 400) loadCatalog();   // наличностите може да са се променили
   } finally {
     if (submitBtn) submitBtn.disabled = false;
   }
@@ -1055,6 +1287,7 @@ window.handleUserReviewSubmit = async function() {
   try {
     const res = await apiFetch('/reviews', {
       method: 'POST',
+      headers: captchaHeaders('review'),
       body: JSON.stringify({ authorName: name, city, rating, comment: text })
     });
 
@@ -1066,5 +1299,17 @@ window.handleUserReviewSubmit = async function() {
     showToast(`🍯 ${res.message}`);
   } catch (err) {
     showToast(`❌ ${err.message}`);
+  } finally {
+    reloadCaptcha('review');   // токенът е еднократен
   }
 };
+
+// Проверка „не съм робот“ (монтира се от extras.js); при изключена проверка връща празни хедъри
+function captchaHeaders(name) {
+  const c = window.PBCaptcha && window.PBCaptcha[name];
+  return c ? c.headers() : {};
+}
+function reloadCaptcha(name) {
+  const c = window.PBCaptcha && window.PBCaptcha[name];
+  if (c) c.reload();
+}

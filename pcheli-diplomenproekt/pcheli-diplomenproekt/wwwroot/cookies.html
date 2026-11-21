@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Политика за бисквитки – Пчелари България</title>
+  <meta name="description" content="Какви бисквитки и локално хранилище използва сайтът Пчелари България и защо.">
+  <meta name="theme-color" content="#140a05">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="pages.css">
+  <script>try{var th=localStorage.getItem('pchelari_theme');if(th)document.documentElement.dataset.theme=th;}catch(e){}</script>
+</head>
+<body class="page">
+  <header class="site-header"><div class="wrap">
+    <a class="brand" href="/">🐝 Пчелари България</a>
+    <nav><a href="/">Начало</a><a href="/#products">Каталог</a><a href="/blog">Блог</a><a href="/contact.html">Контакти</a><span id="site-tools"></span></nav>
+  </div></header>
+
+  <main class="wrap">
+    <article class="legal-doc">
+      <h1>Политика за бисквитки</h1>
+      <p class="updated">Последна актуализация: 21.11.2026 г.</p>
+
+      <p>Сайтът използва <b>само необходими</b> бисквитки и локално хранилище на браузъра. Не използваме рекламни или аналитични бисквитки и не проследяваме посетителите между сайтове, затова не е нужно отделно съгласие – известието при първо посещение е информативно.</p>
+
+      <h2>Какво се съхранява на устройството Ви</h2>
+      <table>
+        <thead><tr><th>Име</th><th>Вид</th><th>Цел</th><th>Срок</th></tr></thead>
+        <tbody>
+          <tr><td><code>pcheli_auth</code></td><td>Бисквитка (HttpOnly)</td><td>Поддържа входа в акаунта (клиент, пчелар, администратор)</td><td>До 8 часа неактивност</td></tr>
+          <tr><td><code>pchelari_bg_cart</code></td><td>Локално хранилище</td><td>Съдържание на количката</td><td>Докато не го изчистите</td></tr>
+          <tr><td><code>pchelari_wishlist</code></td><td>Локално хранилище</td><td>Любими продукти на гост (при вход се сливат с акаунта)</td><td>Докато не го изчистите</td></tr>
+          <tr><td><code>pchelari_theme</code>, <code>pchelari_lang</code></td><td>Локално хранилище</td><td>Избрани тема (светла/тъмна) и език</td><td>Докато не го изчистите</td></tr>
+          <tr><td><code>pchelari_consent</code></td><td>Локално хранилище</td><td>Помни, че сте видели това известие</td><td>Докато не го изчистите</td></tr>
+          <tr><td>Данни на сесията (sessionStorage)</td><td>Сесия на браузъра</td><td>Кратко запомняне на стъпки в страницата (напр. въведение, отворен продукт)</td><td>До затваряне на раздела</td></tr>
+          <tr><td>Кеш на приложението (service worker)</td><td>Кеш на браузъра</td><td>По-бързо зареждане на статичните файлове и страница „Няма връзка“</td><td>Докато не го изчистите</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Услуги на трети страни</h2>
+      <p>За да работи сайтът, браузърът Ви зарежда ресурси от външни доставчици, които могат да виждат IP адреса Ви:</p>
+      <ul>
+        <li>Google Fonts (шрифтове) – <code>fonts.googleapis.com</code>, <code>fonts.gstatic.com</code>;</li>
+        <li>unpkg.com – библиотеките за икони (Lucide) и карта (Leaflet);</li>
+        <li>OpenStreetMap – плочки на картата на пчелините;</li>
+        <li>Stripe – само ако изберете плащане с карта (страницата за плащане е на Stripe).</li>
+      </ul>
+
+      <h2>Как да ги управлявате</h2>
+      <p>Можете да изтриете бисквитките и локалното хранилище от настройките на браузъра си. Ако го направите, ще бъдете отписани, а количката и любимите на госта ще се изчистят. Блокирането на необходимите бисквитки може да попречи на входа и поръчките.</p>
+      <p>Въпроси? Вижте <a href="/privacy.html">Политиката за поверителност</a> или ни пишете през <a href="/contact.html">формата за контакт</a>.</p>
+    </article>
+  </main>
+
+  <footer class="site-footer"><div class="wrap">© 2026 Пчелари България</div></footer>
+  <script src="i18n.js"></script>
+  <script src="common.js"></script>
+  <script src="legal.js"></script>
+  <script src="consent.js"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@ using pcheli_diplomenproekt.Models;
 namespace pcheli_diplomenproekt.Dtos;
 
 // ---------- Изходни DTO ----------
-public record VariantDto(int Id, string Label, string Weight, decimal Price, bool InStock);
+public record VariantDto(int Id, string Label, string Weight, decimal Price, bool InStock, int Stock = 0);
 
 public record BeekeeperSummaryDto(int Id, string FullName, string ApiaryName, string RegistrationNumber,
     string Region, string CityOrVillage, string Phone, double Rating);
@@ -12,13 +12,17 @@ public record BeekeeperSummaryDto(int Id, string FullName, string ApiaryName, st
 public record ProductDto(int Id, string Name, string Type, string Category, string Origin, string Tag, string Image,
     string Description, string Color, string Aroma, string Crystallization, string HarvestDate, string Purity,
     string TastingNotes, double Rating, bool InStock, string[] QuizTags,
-    List<VariantDto> Variants, BeekeeperSummaryDto? Beekeeper);
+    List<VariantDto> Variants, BeekeeperSummaryDto? Beekeeper,
+    string Contents = "", string BatchNumber = "", int? HarvestYear = null, string LabReportUrl = "",
+    string LabSummary = "", string Certificates = "", string NameEn = "", string DescriptionEn = "",
+    DateTime? CreatedAt = null);
 
 public record BeekeeperDto(int Id, string FullName, string ApiaryName, string RegistrationNumber, string Region,
     string CityOrVillage, string Phone, string Email, string Bio, int ExperienceYears, int HiveCount, double Rating,
-    bool IsVerified, bool HasHoney, bool HasPollen, int ProductCount);
+    bool IsVerified, bool HasHoney, bool HasPollen, int ProductCount, string PhotoUrl = "");
 
-public record OrderResultDto(string OrderNumber, decimal Subtotal, decimal Discount, decimal Shipping, decimal Total, string Message);
+public record OrderResultDto(string OrderNumber, decimal Subtotal, decimal Discount, decimal Shipping, decimal Total, string Message,
+    bool RequiresPayment = false, string PaymentStatus = "Наложен платеж");
 
 public record OrderItemDto(int ProductId, int ProductVariantId, string ProductName, string ApiaryName, string Weight,
     int Quantity, decimal UnitPrice, decimal TotalPrice);
@@ -26,7 +30,9 @@ public record OrderItemDto(int ProductId, int ProductVariantId, string ProductNa
 public record OrderDto(int Id, string OrderNumber, string CustomerName, string CustomerPhone, string CustomerEmail,
     string DeliveryCity, string DeliveryAddress, string? Notes, string PaymentMethod, string? PromoCode,
     decimal Subtotal, decimal DiscountAmount, decimal ShippingAmount, decimal TotalAmount, string Status,
-    DateTime CreatedAt, List<OrderItemDto> Items);
+    DateTime CreatedAt, List<OrderItemDto> Items,
+    string PaymentStatus = "", string Courier = "", string DeliveryType = "", bool IsGift = false, string? GiftMessage = null,
+    List<OrderEventDto>? Events = null, bool CanUpdateStatus = false);
 
 public record ReviewDto(int Id, string AuthorName, string City, int Rating, string Comment, bool IsApproved,
     DateTime CreatedAt, int? ProductId, string? ProductName);
@@ -71,9 +77,40 @@ public class CreateOrderDto
     [MaxLength(40)]
     public string? PromoCode { get; set; }
 
+    /// <summary>„cod“ (наложен платеж, по подразбиране) или „card“ (онлайн с карта през Stripe).</summary>
+    [MaxLength(10)]
+    public string? PaymentType { get; set; }
+
+    /// <summary>„Еконт“ или „Спиди“.</summary>
+    [MaxLength(30)]
+    public string? Courier { get; set; }
+
+    /// <summary>„Офис“ или „Адрес“.</summary>
+    [MaxLength(20)]
+    public string? DeliveryType { get; set; }
+
+    public bool IsGift { get; set; }
+
+    [MaxLength(300)]
+    public string? GiftMessage { get; set; }
+
     [Required, MinLength(1, ErrorMessage = "Количката е празна")]
     public List<CreateOrderItemDto> Items { get; set; } = new();
 }
+
+/// <summary>Заявка за изчисляване на цената (подбор на куриер, отстъпка, доставка) без създаване на поръчка.</summary>
+public class QuoteRequestDto
+{
+    [MaxLength(40)] public string? PromoCode { get; set; }
+    [MaxLength(30)] public string? Courier { get; set; }
+    [MaxLength(20)] public string? DeliveryType { get; set; }
+
+    [Required, MinLength(1, ErrorMessage = "Количката е празна")]
+    public List<CreateOrderItemDto> Items { get; set; } = new();
+}
+
+public record QuoteDto(decimal Subtotal, decimal Discount, decimal Shipping, decimal Total, decimal FreeShippingFrom,
+    decimal WeightKg, string Courier, string DeliveryType, string? PromoCode, int DiscountPercent);
 
 public class CreateOrderItemDto
 {
@@ -165,6 +202,16 @@ public class ProductUpsertDto
     [MaxLength(200)] public string QuizTags { get; set; } = string.Empty;
     public bool InStock { get; set; } = true;
 
+    // Подаръчни комплекти, произход и сертификати, английски текстове
+    [MaxLength(500)] public string Contents { get; set; } = string.Empty;
+    [MaxLength(60)] public string BatchNumber { get; set; } = string.Empty;
+    [Range(1990, 2100, ErrorMessage = "Невалидна година на реколтата")] public int? HarvestYear { get; set; }
+    [MaxLength(250)] public string LabReportUrl { get; set; } = string.Empty;
+    [MaxLength(400)] public string LabSummary { get; set; } = string.Empty;
+    [MaxLength(300)] public string Certificates { get; set; } = string.Empty;
+    [MaxLength(150)] public string NameEn { get; set; } = string.Empty;
+    [MaxLength(2000)] public string DescriptionEn { get; set; } = string.Empty;
+
     [Required, MinLength(1, ErrorMessage = "Добавете поне една опаковка")]
     public List<VariantUpsertDto> Variants { get; set; } = new();
 }
@@ -175,6 +222,9 @@ public class VariantUpsertDto
     [Required, MaxLength(50)] public string Weight { get; set; } = string.Empty;
     [Range(0.01, 100000, ErrorMessage = "Невалидна цена")] public decimal Price { get; set; }
     public bool InStock { get; set; } = true;
+
+    /// <summary>Наличен брой; ако не е подаден, при ново създадена опаковка е 100, а при съществуваща не се променя.</summary>
+    [Range(0, 1000000, ErrorMessage = "Невалидна наличност")] public int? StockQuantity { get; set; }
 }
 
 public class PromoCodeUpsertDto
@@ -208,10 +258,12 @@ public static class Mapping
         p.Id, p.Name, p.Type, p.Category, p.Origin, p.Tag, p.Image, p.Description, p.Color, p.Aroma,
         p.Crystallization, p.HarvestDate, p.Purity, p.TastingNotes, p.Rating, p.InStock,
         p.QuizTags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
-        p.Variants.OrderBy(v => v.Id).Select(v => new VariantDto(v.Id, v.Label, v.Weight, v.Price, v.InStock)).ToList(),
+        p.Variants.OrderBy(v => v.Id).Select(v => new VariantDto(v.Id, v.Label, v.Weight, v.Price, v.InStock && v.StockQuantity > 0, v.StockQuantity)).ToList(),
         p.Beekeeper == null ? null : new BeekeeperSummaryDto(p.Beekeeper.Id, p.Beekeeper.FullName, p.Beekeeper.ApiaryName,
             p.Beekeeper.RegistrationNumber, p.Beekeeper.Region?.Name ?? string.Empty, p.Beekeeper.CityOrVillage,
-            p.Beekeeper.Phone, p.Beekeeper.Rating));
+            p.Beekeeper.Phone, p.Beekeeper.Rating),
+        p.Contents, p.BatchNumber, p.HarvestYear, p.LabReportUrl, p.LabSummary, p.Certificates, p.NameEn,
+        p.DescriptionEn, p.CreatedAt);
 
     public static ReviewDto ToDto(this Review r) =>
         new(r.Id, r.AuthorName, r.City, r.Rating, r.Comment, r.IsApproved, r.CreatedAt, r.ProductId, r.Product?.Name);
@@ -227,5 +279,7 @@ public static class Mapping
         o.Notes, o.PaymentMethod, o.PromoCode, o.Subtotal, o.DiscountAmount, o.ShippingAmount, o.TotalAmount,
         o.Status, o.CreatedAt,
         o.Items.Select(i => new OrderItemDto(i.ProductId, i.ProductVariantId, i.ProductName, i.ApiaryName, i.Weight,
-            i.Quantity, i.UnitPrice, i.TotalPrice)).ToList());
+            i.Quantity, i.UnitPrice, i.TotalPrice)).ToList(),
+        o.PaymentStatus, o.Courier, o.DeliveryType, o.IsGift, o.GiftMessage,
+        o.Events.OrderBy(e => e.At).ThenBy(e => e.Id).Select(e => new OrderEventDto(e.Status, e.Note, e.At)).ToList());
 }

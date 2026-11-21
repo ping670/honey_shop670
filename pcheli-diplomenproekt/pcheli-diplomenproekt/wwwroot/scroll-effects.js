@@ -354,13 +354,9 @@
      14. HONEY DRIPS FROM HERO INTO OTHER SECTIONS
   ────────────────────────────────────────────── */
   function initHoneyDrips() {
-    // Sections that receive the drips (all except hero)
-    const targetSelectors = [
-      '#atmosphere',
-      '#quiz',
-      '#products',
-      '#reviews',
-    ];
+    // Every top-level section except the hero (first slide) gets the drips
+    const targetSections = Array.from(document.querySelectorAll('body > section'))
+      .filter(s => s.id !== 'hero');
 
     // Drip config — spread across the full width naturally
     // We define "anchor" x-positions as percentages and randomize slightly each time
@@ -379,10 +375,7 @@
       { xPct: 95,  dur: 3.3, delay: 1.7,  maxH: 65  },
     ];
 
-    targetSelectors.forEach(sel => {
-      const section = document.querySelector(sel);
-      if (!section) return;
-
+    targetSections.forEach(section => {
       // Ensure section has relative positioning for absolute children
       const pos = getComputedStyle(section).position;
       if (pos === 'static') section.style.position = 'relative';

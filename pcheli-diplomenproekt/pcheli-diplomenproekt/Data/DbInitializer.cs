@@ -7,6 +7,8 @@ namespace pcheli_diplomenproekt.Data;
 public static class DbInitializer
 {
     public const string AdminRole = "Admin";
+    public const string CustomerRole = "Customer";
+    public const string BeekeeperRole = "Beekeeper";
 
     /// <summary>
     /// Прилага EF Core миграциите и (идемпотентно) попълва началните данни и администратора.
@@ -21,6 +23,9 @@ public static class DbInitializer
 
         await SeedCatalogAsync(context);
         await SeedReviewsAsync(context);
+        await SeedExtras.EnrichProductsAsync(context);
+        await SeedExtras.SeedGiftSetsAsync(context);
+        await SeedExtras.SeedArticlesAsync(context);
         await SeedAdminAsync(services, logger);
     }
 
@@ -65,17 +70,18 @@ public static class DbInitializer
     }
 
     /// <summary>
-    /// Създава ролята Admin и един администратор. Потребителското име и паролата се четат от конфигурацията
-    /// (User Secrets в Development или променливи на средата Admin__Username / Admin__Password) – никога от кода.
+    /// Създава ролите (Admin, Customer, Beekeeper) и един администратор. Потребителското име и паролата се четат от
+    /// конфигурацията (User Secrets в Development или променливи на средата Admin__Username / Admin__Password) – никога от кода.
     /// </summary>
     private static async Task SeedAdminAsync(IServiceProvider services, ILogger logger)
     {
         var roles = services.GetRequiredService<RoleManager<IdentityRole>>();
-        var users = services.GetRequiredService<UserManager<IdentityUser>>();
+        var users = services.GetRequiredService<UserManager<ApplicationUser>>();
         var config = services.GetRequiredService<IConfiguration>();
 
-        if (!await roles.RoleExistsAsync(AdminRole))
-            await roles.CreateAsync(new IdentityRole(AdminRole));
+        foreach (var role in new[] { AdminRole, CustomerRole, BeekeeperRole })
+            if (!await roles.RoleExistsAsync(role))
+                await roles.CreateAsync(new IdentityRole(role));
 
         var username = config["Admin:Username"];
         var password = config["Admin:Password"];
@@ -89,7 +95,7 @@ public static class DbInitializer
         var user = await users.FindByNameAsync(username);
         if (user is null)
         {
-            user = new IdentityUser { UserName = username, Email = config["Admin:Email"], EmailConfirmed = true };
+            user = new ApplicationUser { UserName = username, Email = config["Admin:Email"], EmailConfirmed = true, FullName = "Администратор" };
             var result = await users.CreateAsync(user, password);
             if (!result.Succeeded)
             {

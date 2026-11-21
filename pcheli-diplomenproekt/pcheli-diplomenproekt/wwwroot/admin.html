@@ -6,32 +6,44 @@
   <meta name="robots" content="noindex">
   <title>Администрация – Пчелари България</title>
   <style>
-    :root { --bg:#140a05; --card:#1f1109; --gold:#f59e0b; --text:#faf4eb; --muted:#b8a999; --ok:#34d399; --bad:#ef4444; }
+    :root { --bg:#140a05; --card:#1f1109; --gold:#f59e0b; --text:#faf4eb; --muted:#b8a999; --ok:#34d399; --bad:#ef4444; --line:#2e1b10; }
     * { box-sizing: border-box; }
     body { margin:0; font-family: system-ui, "Segoe UI", sans-serif; background:var(--bg); color:var(--text); }
-    header { display:flex; justify-content:space-between; align-items:center; padding:14px 24px; background:#0b0503; border-bottom:1px solid #3a2415; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; padding:14px 24px; background:#0b0503; border-bottom:1px solid #3a2415; }
     header h1 { font-size:1.1rem; margin:0; color:var(--gold); }
     a { color:var(--gold); }
-    main { padding:20px 24px; max-width:1200px; margin:0 auto; }
+    main { padding:20px 24px; max-width:1280px; margin:0 auto; }
     nav { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
-    button { cursor:pointer; border:1px solid var(--gold); background:transparent; color:var(--gold); padding:6px 12px; border-radius:8px; font-size:.85rem; }
+    button { cursor:pointer; border:1px solid var(--gold); background:transparent; color:var(--gold); padding:6px 12px; border-radius:8px; font-size:.85rem; font-family:inherit; }
     button.primary, nav button.active { background:var(--gold); color:#140a05; }
     button.danger { border-color:var(--bad); color:var(--bad); }
     button.ok { border-color:var(--ok); color:var(--ok); }
+    button:disabled { opacity:.5; cursor:not-allowed; }
     input, select, textarea { background:#0b0503; color:var(--text); border:1px solid #3a2415; border-radius:8px; padding:7px 10px; font:inherit; }
+    .table-wrap { overflow-x:auto; }
     table { width:100%; border-collapse:collapse; background:var(--card); border-radius:10px; overflow:hidden; font-size:.88rem; }
-    th, td { text-align:left; padding:9px 12px; border-bottom:1px solid #2e1b10; vertical-align:top; }
-    th { color:var(--gold); font-weight:600; background:#180d07; }
+    th, td { text-align:left; padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+    th { color:var(--gold); font-weight:600; background:#180d07; white-space:nowrap; }
     .login { max-width:340px; margin:80px auto; background:var(--card); padding:26px; border-radius:14px; display:grid; gap:12px; }
     .msg { margin:10px 0; min-height:1.2em; color:var(--muted); }
     .msg.err { color:var(--bad); } .msg.good { color:var(--ok); }
     .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
     .badge { padding:2px 8px; border-radius:10px; font-size:.75rem; background:#3a2415; }
-    dialog { background:var(--card); color:var(--text); border:1px solid var(--gold); border-radius:14px; max-width:640px; width:92%; }
+    .badge.low { background:#7c2d12; } .badge.good { background:#064e3b; }
+    dialog { background:var(--card); color:var(--text); border:1px solid var(--gold); border-radius:14px; max-width:720px; width:94%; max-height:92vh; overflow:auto; }
     dialog::backdrop { background:rgba(0,0,0,.6); }
     .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .grid2 label { display:grid; gap:4px; font-size:.8rem; color:var(--muted); }
     .grid2 .full { grid-column:1/-1; }
+    .tiles { display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:12px; margin-bottom:18px; }
+    .tile { background:var(--card); border:1px solid #3a2415; border-radius:12px; padding:12px 14px; }
+    .tile b { display:block; font-size:1.55rem; color:var(--gold); } .tile span { font-size:.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; }
+    .charts { display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:16px; margin-bottom:18px; }
+    .chart-card { background:var(--card); border:1px solid #3a2415; border-radius:12px; padding:14px; }
+    .chart-card h3 { margin:0 0 10px; font-size:.95rem; color:var(--gold); } .chart-box { position:relative; height:260px; }
+    .pager { display:flex; gap:6px; align-items:center; margin:14px 0; flex-wrap:wrap; }
+    small { color:var(--muted); }
+    @media (max-width:640px) { main { padding:14px 12px; } .grid2 { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
@@ -50,13 +62,23 @@
 
   <section id="app-view" style="display:none">
     <nav id="tabs">
-      <button data-tab="applications" class="active">Заявки за пчелари</button>
+      <button data-tab="dashboard" class="active">Табло</button>
+      <button data-tab="applications">Заявки за пчелари</button>
+      <button data-tab="beekeepers">Пчелари</button>
+      <button data-tab="regions">Региони</button>
       <button data-tab="products">Продукти</button>
+      <button data-tab="inventory">Наличности</button>
       <button data-tab="orders">Поръчки</button>
+      <button data-tab="subscriptions">Абонаменти</button>
+      <button data-tab="articles">Блог</button>
       <button data-tab="reviews">Отзиви</button>
       <button data-tab="promocodes">Промо кодове</button>
+      <button data-tab="users">Потребители</button>
+      <button data-tab="messages">Съобщения</button>
+      <button data-tab="newsletter">Бюлетин</button>
+      <button data-tab="audit">Журнал</button>
     </nav>
-    <div id="msg" class="msg"></div>
+    <div id="msg" class="msg" role="status"></div>
     <div id="content"></div>
   </section>
 </main>
@@ -66,12 +88,13 @@
     <h3 id="product-dialog-title" style="margin-top:0">Продукт</h3>
     <div class="grid2">
       <label>Пчелар (ID)<input name="beekeeperId" type="number" min="1" required></label>
-      <label>Тип<select name="type"><option>Мед</option><option>Пчелен прашец</option></select></label>
+      <label>Тип<select name="type"><option>Мед</option><option>Пчелен прашец</option><option>Подаръчен комплект</option></select></label>
       <label class="full">Име<input name="name" required></label>
       <label>Категория<input name="category" required placeholder="manov, acacia, herbal, lavender, linden, pollen"></label>
       <label>Произход<input name="origin" required></label>
       <label>Етикет<input name="tag"></label>
-      <label>Снимка<input name="image" placeholder="./images/acacia.jpg"></label>
+      <label>Снимка (адрес или качване)<input name="image" placeholder="./images/acacia.jpg"></label>
+      <label class="full">Качване на снимка<input type="file" id="product-upload" accept="image/jpeg,image/png,image/webp"></label>
       <label>Реколта<input name="harvestDate"></label>
       <label>Качество<input name="purity"></label>
       <label>Цвят<input name="color"></label>
@@ -80,26 +103,82 @@
       <label class="full">Вкусови нотки<input name="tastingNotes"></label>
       <label class="full">Описание<textarea name="description" rows="3"></textarea></label>
       <label class="full">Тагове за въпросника (със запетая)<input name="quizTags" placeholder="immunity,herbal"></label>
-      <label class="full">Опаковки (по една на ред: Етикет | тегло | цена)
-        <textarea name="variants" rows="3" placeholder="Буркан 0.9 кг | 0.9kg | 12.27" required></textarea></label>
+      <label class="full">Опаковки (по една на ред: Етикет | тегло | цена | наличност)
+        <textarea name="variants" rows="3" placeholder="Буркан 0.9 кг | 0.9kg | 12.27 | 100" required></textarea></label>
       <label><span><input type="checkbox" name="inStock" checked> В наличност</span></label>
+      <label class="full"><b style="color:var(--gold)">Произход и проследимост</b></label>
+      <label>Партида №<input name="batchNumber"></label>
+      <label>Година на реколтата<input name="harvestYear" type="number" min="1990" max="2100"></label>
+      <label>Сертификати<input name="certificates"></label>
+      <label>Лабораторен анализ (резюме)<input name="labSummary"></label>
+      <label class="full">Връзка към лабораторен протокол (https://…)<input name="labReportUrl"></label>
+      <label class="full">Състав (за подаръчни комплекти)<input name="contents"></label>
+      <label>Name (English)<input name="nameEn"></label>
+      <label class="full">Description (English)<textarea name="descriptionEn" rows="2"></textarea></label>
     </div>
     <div class="row" style="margin-top:14px"><button class="primary" value="save" id="product-save">Запази</button><button value="cancel" formnovalidate>Откажи</button></div>
   </form>
 </dialog>
 
+<dialog id="beekeeper-dialog">
+  <form method="dialog" id="beekeeper-form">
+    <h3 id="beekeeper-dialog-title" style="margin-top:0">Редакция на пчелар</h3>
+    <div class="grid2">
+      <label>Име на пчеларя<input name="fullName" required maxlength="100"></label>
+      <label>Име на пчелина<input name="apiaryName" required maxlength="120"></label>
+      <label>БАБХ номер<input name="registrationNumber" required maxlength="50"></label>
+      <label>Регион<select name="region" id="bk-region"></select></label>
+      <label>Населено място<input name="cityOrVillage" required maxlength="100"></label>
+      <label>Телефон<input name="phone" required maxlength="30"></label>
+      <label>Имейл (за известия за поръчки)<input name="email" type="email" maxlength="100"></label>
+      <label>Кошери<input name="hiveCount" type="number" min="1" max="100000" required></label>
+      <label>Години опит<input name="experienceYears" type="number" min="0" max="100"></label>
+      <label class="full">Представяне<textarea name="bio" rows="3" maxlength="1000"></textarea></label>
+      <label><span><input type="checkbox" name="isVerified"> Проверен по БАБХ</span></label>
+      <label><span><input type="checkbox" name="hasHoney"> Предлага мед</span></label>
+      <label><span><input type="checkbox" name="hasPollen"> Предлага прашец</span></label>
+      <label><span><input type="checkbox" name="isActive"> Видим в сайта</span></label>
+    </div>
+    <div class="row" style="margin-top:14px"><button class="primary" value="save">Запази</button><button value="cancel" formnovalidate>Откажи</button></div>
+  </form>
+</dialog>
+
+<dialog id="article-dialog">
+  <form method="dialog" id="article-form">
+    <h3 id="article-dialog-title" style="margin-top:0">Статия</h3>
+    <div class="grid2">
+      <label class="full">Заглавие<input name="title" required maxlength="200"></label>
+      <label>Адрес (slug, по желание)<input name="slug" maxlength="120"></label>
+      <label>Категория<input name="category" value="Здраве"></label>
+      <label>Автор<input name="author" value="Екипът на Пчелари България"></label>
+      <label>Заглавна снимка<input name="coverImage" value="./images/hero.png"></label>
+      <label class="full">Кратко описание<input name="summary" maxlength="400"></label>
+      <label class="full">Текст (абзаците се разделят с празен ред; „## “ – подзаглавие; „- “ – списък)
+        <textarea name="content" rows="12" required></textarea></label>
+      <label><span><input type="checkbox" name="isPublished" checked> Публикувана</span></label>
+    </div>
+    <div class="row" style="margin-top:14px"><button class="primary" value="save">Запази</button><button value="cancel" formnovalidate>Откажи</button></div>
+  </form>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate = d => new Date(d).toLocaleString('bg-BG');
-let tab = 'applications', editingProductId = null;
+const eur = n => Number(n || 0).toFixed(2) + ' €';
+let tab = 'dashboard', editingProductId = null, editingArticleId = null, charts = [];
+let ordersState = { page: 1, status: '', search: '', from: '', to: '' };
+let auditState = { page: 1, user: '', search: '' };
+const STATUSES = ['Приета','Обработва се','Изпратена','Доставена','Отказана'];
 
 async function api(path, opts = {}) {
-  const res = await fetch('/api' + path, { headers: {'Content-Type':'application/json'}, ...opts });
+  const { headers, ...rest } = opts;
+  const res = await fetch('/api' + path, { credentials: 'same-origin', headers: opts.body instanceof FormData ? {} : {'Content-Type':'application/json', ...(headers || {})}, ...rest });
   let data = null; try { data = await res.json(); } catch {}
-  if ((res.status === 401 || res.status === 403) && path !== '/auth/login') { showLogin(); throw new Error('Нужен е вход.'); }
-  if (!res.ok) throw new Error((data && (data.errors ? Object.values(data.errors).flat().join(' ') : data.title || data.message)) || ('Грешка ' + res.status));
-  return data;
+  if ((res.status === 401 || res.status === 403) && path !== '/auth/login') { showLogin(); throw new Error('Нужен е вход като администратор.'); }
+  if (!res.ok) throw new Error((data && (data.errors ? Object.values(data.errors).flat().join(' ') : data.message || data.detail || data.title)) || ('Грешка ' + res.status));
+  return opts.meta ? { data, total: parseInt(res.headers.get('X-Total-Count') || '0', 10) } : data;
 }
 function say(text, cls = '') { const m = $('#msg'); m.textContent = text; m.className = 'msg ' + cls; }
 function showLogin() { $('#login-view').style.display = 'grid'; $('#app-view').style.display = 'none'; $('#logout-btn').style.display = 'none'; }
@@ -117,80 +196,301 @@ $('#tabs').onclick = e => { const b = e.target.closest('button[data-tab]'); if (
   tab = b.dataset.tab; document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('active', x === b)); load(); };
 
 async function act(fn, ok) { try { await fn(); say(ok, 'good'); } catch (e) { say(e.message, 'err'); } load(); }
+const table = (head, rows) => `<div class="table-wrap"><table><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr>${rows.join('') || `<tr><td colspan="${head.length}"><small>Няма данни.</small></td></tr>`}</table></div>`;
+
+function pager(page, total, size, id) {
+  const pages = Math.max(1, Math.ceil(total / size));
+  return `<div class="pager"><button data-pg="${page - 1}" ${page <= 1 ? 'disabled' : ''}>‹</button><span>Страница ${page} от ${pages} (${total})</span><button data-pg="${page + 1}" ${page >= pages ? 'disabled' : ''}>›</button></div>`;
+}
 
 async function load() {
   say(''); const c = $('#content');
+  charts.forEach(ch => ch.destroy()); charts = [];
   try {
-    if (tab === 'applications') {
+    if (tab === 'dashboard') await renderDashboard(c);
+    else if (tab === 'applications') {
       const rows = await api('/admin/applications');
-      c.innerHTML = `<table><tr><th>Дата</th><th>Пчелар</th><th>Пчелин / БАБХ</th><th>Регион</th><th>Контакт</th><th>Предлага</th><th>Статус</th><th></th></tr>` +
-        rows.map(a => `<tr><td>${fmtDate(a.submittedAt)}</td><td>${esc(a.fullName)}</td><td>${esc(a.apiaryName)}<br><small>${esc(a.registrationNumber)}</small></td>
+      c.innerHTML = table(['Дата','Пчелар','Пчелин / БАБХ','Регион','Контакт','Предлага','Статус',''], rows.map(a => `<tr><td>${fmtDate(a.submittedAt)}</td><td>${esc(a.fullName)}</td><td>${esc(a.apiaryName)}<br><small>${esc(a.registrationNumber)}</small></td>
         <td>${esc(a.region)}<br><small>${esc(a.cityOrVillage)}</small></td><td>${esc(a.phone)}<br><small>${esc(a.email)}</small></td>
         <td>${a.offersHoney ? '🍯' : ''} ${a.offersPollen ? '🌼' : ''}<br><small>${a.hiveCount} кошера</small></td><td><span class="badge">${esc(a.status)}</span></td>
-        <td>${a.status === 'В обработка' ? `<button class="ok" data-approve="${a.id}">Одобри</button> <button class="danger" data-reject="${a.id}">Откажи</button>` : ''}</td></tr>`).join('') + `</table>`;
+        <td>${a.status === 'В обработка' ? `<button class="ok" data-approve="${a.id}">Одобри</button> <button class="danger" data-reject="${a.id}">Откажи</button>` : ''}
+        ${a.beekeeperId ? `<button data-link="${a.beekeeperId}" title="Свързва пчелина с вече регистриран акаунт по имейл">Свържи акаунт</button>` : ''}</td></tr>`));
       c.querySelectorAll('[data-approve]').forEach(b => b.onclick = () => act(() => api(`/admin/applications/${b.dataset.approve}/approve`, {method:'POST'}), 'Заявката е одобрена, пчеларят е публикуван.'));
       c.querySelectorAll('[data-reject]').forEach(b => b.onclick = () => act(() => api(`/admin/applications/${b.dataset.reject}/reject`, {method:'POST'}), 'Заявката е отхвърлена.'));
+      c.querySelectorAll('[data-link]').forEach(b => b.onclick = () => { const email = prompt('Имейл на регистрирания акаунт на пчеларя:'); if (email) act(() => api(`/admin/beekeepers/${b.dataset.link}/link-account`, {method:'POST', body: JSON.stringify({email})}), 'Акаунтът е свързан – пчеларят има достъп до панела.'); });
     } else if (tab === 'products') {
       const rows = await api('/admin/products'); window._products = rows;
-      c.innerHTML = `<div class="row"><button class="primary" id="new-product">+ Нов продукт</button></div><table><tr><th>ID</th><th>Продукт</th><th>Пчелар</th><th>Опаковки</th><th>Наличен</th><th></th></tr>` +
-        rows.map(p => `<tr><td>${p.id}</td><td>${esc(p.name)}<br><small>${esc(p.type)} · ${esc(p.category)}</small></td><td>${p.beekeeper ? esc(p.beekeeper.apiaryName) + ' (#' + p.beekeeper.id + ')' : ''}</td>
-        <td>${p.variants.map(v => esc(v.label) + ' – ' + Number(v.price).toFixed(2) + ' €').join('<br>')}</td><td>${p.inStock ? 'Да' : 'Не'}</td>
-        <td><button data-edit="${p.id}">Редактирай</button> <button class="danger" data-del="${p.id}">Изтрий</button></td></tr>`).join('') + `</table>`;
+      c.innerHTML = `<div class="row"><button class="primary" id="new-product">+ Нов продукт</button></div>` + table(['ID','Продукт','Пчелар','Опаковки','Партида','Наличен',''], rows.map(p => `<tr><td>${p.id}</td><td>${esc(p.name)}<br><small>${esc(p.type)} · ${esc(p.category)}</small></td><td>${p.beekeeper ? esc(p.beekeeper.apiaryName) + ' (#' + p.beekeeper.id + ')' : ''}</td>
+        <td>${p.variants.map(v => esc(v.label) + ' – ' + eur(v.price) + ' <small>(' + v.stock + ' бр.)</small>').join('<br>')}</td><td>${esc(p.batchNumber || '—')}</td><td>${p.inStock ? 'Да' : 'Не'}</td>
+        <td><button data-edit="${p.id}">Редактирай</button> <button class="danger" data-del="${p.id}">Изтрий</button></td></tr>`));
       $('#new-product').onclick = () => openProduct(null);
       c.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openProduct(window._products.find(p => p.id == b.dataset.edit)));
       c.querySelectorAll('[data-del]').forEach(b => b.onclick = () => confirm('Да се изтрие ли продуктът? (Ако има поръчки, само ще бъде скрит.)') && act(() => api(`/admin/products/${b.dataset.del}`, {method:'DELETE'}), 'Готово.'));
-    } else if (tab === 'orders') {
-      const rows = await api('/admin/orders'); const st = ['Приета','Обработва се','Изпратена','Доставена','Отказана'];
-      c.innerHTML = `<table><tr><th>№</th><th>Дата</th><th>Клиент</th><th>Доставка</th><th>Артикули</th><th>Сума</th><th>Статус</th></tr>` +
-        rows.map(o => `<tr><td>${esc(o.orderNumber)}</td><td>${fmtDate(o.createdAt)}</td><td>${esc(o.customerName)}<br><small>${esc(o.customerPhone)} ${esc(o.customerEmail)}</small></td>
-        <td>${esc(o.deliveryCity)}<br><small>${esc(o.deliveryAddress)}</small></td><td>${o.items.map(i => `${i.quantity}× ${esc(i.productName)} <small>(${esc(i.weight)})</small>`).join('<br>')}</td>
-        <td><b>${Number(o.totalAmount).toFixed(2)} €</b><br><small>${o.promoCode ? 'код ' + esc(o.promoCode) + ' −' + Number(o.discountAmount).toFixed(2) + ' €' : ''}</small></td>
-        <td><select data-status="${o.id}">${st.map(s => `<option ${s === o.status ? 'selected' : ''}>${s}</option>`).join('')}</select></td></tr>`).join('') + `</table>`;
-      c.querySelectorAll('[data-status]').forEach(s => s.onchange = () => act(() => api(`/admin/orders/${s.dataset.status}/status`, {method:'PUT', body: JSON.stringify({status: s.value})}), 'Статусът е обновен.'));
+    } else if (tab === 'inventory') await renderInventory(c);
+    else if (tab === 'orders') await renderOrders(c);
+    else if (tab === 'subscriptions') {
+      const rows = await api('/admin/subscriptions');
+      c.innerHTML = `<p><small>Само за преглед. Абонатите ги управляват от профила си; поръчките се създават автоматично на датата на доставка.</small></p>` +
+        table(['Продукт','Кол.','На всеки','Следваща доставка','Статус','Доставка','Създадени'], rows.map(s => `<tr><td>${esc(s.productName)}<br><small>${esc(s.variantLabel)}</small></td><td>${s.quantity}</td><td>${s.intervalMonths} мес.</td><td>${fmtDate(s.nextDeliveryDate)}</td>
+          <td><span class="badge ${s.status === 'Активен' ? 'good' : ''}">${esc(s.status)}</span></td><td>${esc(s.deliveryCity)}<br><small>${esc(s.courier)} · ${esc(s.deliveryType)}</small></td><td>${s.ordersCreated}</td></tr>`));
+    } else if (tab === 'articles') {
+      const rows = await api('/admin/articles'); window._articles = rows;
+      c.innerHTML = `<div class="row"><button class="primary" id="new-article">+ Нова статия</button> <a href="/blog" target="_blank" rel="noopener">Отвори блога ↗</a></div>` +
+        table(['Заглавие','Категория','Публикувана','Дата',''], rows.map(a => `<tr><td><a href="/blog/${esc(a.slug)}" target="_blank" rel="noopener">${esc(a.title)}</a><br><small>/${esc(a.slug)}</small></td><td>${esc(a.category)}</td><td>${a.isPublished ? 'Да' : '<span class="badge low">Чернова</span>'}</td><td>${fmtDate(a.publishedAt)}</td>
+          <td><button data-edit="${a.id}">Редактирай</button> <button class="danger" data-del="${a.id}">Изтрий</button></td></tr>`));
+      $('#new-article').onclick = () => openArticle(null);
+      c.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openArticle(window._articles.find(a => a.id == b.dataset.edit)));
+      c.querySelectorAll('[data-del]').forEach(b => b.onclick = () => confirm('Да се изтрие ли статията?') && act(() => api(`/admin/articles/${b.dataset.del}`, {method:'DELETE'}), 'Изтрита.'));
     } else if (tab === 'reviews') {
       const rows = await api('/admin/reviews');
-      c.innerHTML = `<table><tr><th>Дата</th><th>Автор</th><th>Оценка</th><th>Отзив</th><th>Публикуван</th><th></th></tr>` +
-        rows.map(r => `<tr><td>${fmtDate(r.createdAt)}</td><td>${esc(r.authorName)}<br><small>${esc(r.city)}</small></td><td>${'★'.repeat(r.rating)}</td><td>${esc(r.comment)}</td><td>${r.isApproved ? 'Да' : 'Чака'}</td>
-        <td>${r.isApproved ? `<button data-hide="${r.id}">Скрий</button>` : `<button class="ok" data-ok="${r.id}">Одобри</button>`} <button class="danger" data-del="${r.id}">Изтрий</button></td></tr>`).join('') + `</table>`;
+      c.innerHTML = table(['Дата','Автор','Оценка','Отзив','Публикуван',''], rows.map(r => `<tr><td>${fmtDate(r.createdAt)}</td><td>${esc(r.authorName)}<br><small>${esc(r.city)}</small></td><td>${'★'.repeat(r.rating)}</td><td>${esc(r.comment)}</td><td>${r.isApproved ? 'Да' : 'Чака'}</td>
+        <td>${r.isApproved ? `<button data-hide="${r.id}">Скрий</button>` : `<button class="ok" data-ok="${r.id}">Одобри</button>`} <button class="danger" data-del="${r.id}">Изтрий</button></td></tr>`));
       c.querySelectorAll('[data-ok]').forEach(b => b.onclick = () => act(() => api(`/admin/reviews/${b.dataset.ok}/approve`, {method:'POST'}), 'Отзивът е публикуван.'));
       c.querySelectorAll('[data-hide]').forEach(b => b.onclick = () => act(() => api(`/admin/reviews/${b.dataset.hide}/hide`, {method:'POST'}), 'Отзивът е скрит.'));
       c.querySelectorAll('[data-del]').forEach(b => b.onclick = () => confirm('Да се изтрие ли отзивът?') && act(() => api(`/admin/reviews/${b.dataset.del}`, {method:'DELETE'}), 'Изтрит.'));
     } else if (tab === 'promocodes') {
       const rows = await api('/admin/promocodes');
-      c.innerHTML = `<div class="row"><input id="pc-code" placeholder="КОД"><input id="pc-pct" type="number" min="1" max="100" placeholder="%" style="width:80px"><input id="pc-until" type="date"><button class="primary" id="pc-add">Добави</button></div>
-        <table><tr><th>Код</th><th>Отстъпка</th><th>Валиден до</th><th>Активен</th><th></th></tr>` +
-        rows.map(p => `<tr><td>${esc(p.code)}</td><td>${p.discountPercent}%</td><td>${p.validUntil ? fmtDate(p.validUntil) : '—'}</td><td>${p.isActive ? 'Да' : 'Не'}</td>
-        <td><button data-toggle="${p.id}">${p.isActive ? 'Деактивирай' : 'Активирай'}</button> <button class="danger" data-del="${p.id}">Изтрий</button></td></tr>`).join('') + `</table>`;
+      c.innerHTML = `<div class="row"><input id="pc-code" placeholder="КОД"><input id="pc-pct" type="number" min="1" max="100" placeholder="%" style="width:80px"><input id="pc-until" type="date"><button class="primary" id="pc-add">Добави</button></div>` +
+        table(['Код','Отстъпка','Валиден до','Активен',''], rows.map(p => `<tr><td>${esc(p.code)}</td><td>${p.discountPercent}%</td><td>${p.validUntil ? fmtDate(p.validUntil) : '—'}</td><td>${p.isActive ? 'Да' : 'Не'}</td>
+        <td><button data-toggle="${p.id}">${p.isActive ? 'Деактивирай' : 'Активирай'}</button> <button class="danger" data-del="${p.id}">Изтрий</button></td></tr>`));
       $('#pc-add').onclick = () => act(() => api('/admin/promocodes', {method:'POST', body: JSON.stringify({code: $('#pc-code').value, discountPercent: +$('#pc-pct').value, isActive: true, validUntil: $('#pc-until').value || null})}), 'Кодът е добавен.');
       c.querySelectorAll('[data-toggle]').forEach(b => b.onclick = () => { const p = rows.find(x => x.id == b.dataset.toggle);
         act(() => api(`/admin/promocodes/${p.id}`, {method:'PUT', body: JSON.stringify({code: p.code, discountPercent: p.discountPercent, isActive: !p.isActive, validUntil: p.validUntil})}), 'Обновено.'); });
       c.querySelectorAll('[data-del]').forEach(b => b.onclick = () => confirm('Да се изтрие ли кодът?') && act(() => api(`/admin/promocodes/${b.dataset.del}`, {method:'DELETE'}), 'Изтрит.'));
-    }
-  } catch (e) { if (e.message !== 'Нужен е вход.') say(e.message, 'err'); }
+    } else if (tab === 'beekeepers') await renderBeekeepers(c);
+    else if (tab === 'regions') await renderRegions(c);
+    else if (tab === 'users') await renderUsers(c);
+    else if (tab === 'messages') await renderMessages(c);
+    else if (tab === 'newsletter') await renderNewsletter(c);
+    else if (tab === 'audit') await renderAudit(c);
+  } catch (e) { if (!e.message.startsWith('Нужен е вход')) say(e.message, 'err'); }
 }
 
+// ---------------- Табло ----------------
+async function renderDashboard(c) {
+  const d = await api('/admin/dashboard');
+  const tile = (v, l) => `<div class="tile"><b>${v}</b><span>${l}</span></div>`;
+  c.innerHTML = `<div class="tiles">${tile(eur(d.totalRevenue), 'Оборот (без отказани)')}${tile(eur(d.revenueLast30Days), 'Оборот за 30 дни')}${tile(d.ordersTotal, 'Поръчки общо')}${tile(d.ordersLast30Days, 'Поръчки за 30 дни')}
+    ${tile(eur(d.averageOrderValue), 'Средна поръчка')}${tile(d.pendingOrders, 'Чакащи поръчки')}${tile(d.lowStockCount, 'Малка наличност')}${tile(d.activeSubscriptions, 'Активни абонаменти')}
+    ${tile(d.pendingApplications, 'Заявки за одобрение')}${tile(d.pendingReviews, 'Отзиви за одобрение')}${tile(d.customersCount, 'Регистрирани клиенти')}</div>
+    <div class="charts">
+      <div class="chart-card"><h3>Оборот по месеци (последните 12)</h3><div class="chart-box"><canvas id="ch-month"></canvas></div></div>
+      <div class="chart-card"><h3>Поръчки по статус</h3><div class="chart-box"><canvas id="ch-status"></canvas></div></div>
+      <div class="chart-card"><h3>Топ продукти (бр.)</h3><div class="chart-box"><canvas id="ch-prod"></canvas></div></div>
+      <div class="chart-card"><h3>Топ пчелини (оборот)</h3><div class="chart-box"><canvas id="ch-bk"></canvas></div></div>
+    </div>`;
+  if (typeof Chart === 'undefined') {
+    c.insertAdjacentHTML('beforeend', `<p><small>Графиките не се заредиха (няма достъп до cdnjs.cloudflare.com). Данните са налични в таблиците на другите раздели.</small></p>`);
+    return;
+  }
+  Chart.defaults.color = '#b8a999'; Chart.defaults.borderColor = '#2e1b10';
+  const mk = (id, cfg) => charts.push(new Chart($(id), { ...cfg, options: { responsive: true, maintainAspectRatio: false, ...(cfg.options || {}) } }));
+  mk('#ch-month', { type: 'bar', data: { labels: d.monthly.map(m => m.month), datasets: [{ label: 'Оборот €', data: d.monthly.map(m => m.revenue), backgroundColor: '#f59e0b' }] }, options: { plugins: { legend: { display: false } } } });
+  mk('#ch-status', { type: 'doughnut', data: { labels: d.byStatus.map(s => s.status), datasets: [{ data: d.byStatus.map(s => s.count), backgroundColor: ['#f59e0b','#38bdf8','#a78bfa','#34d399','#ef4444'] }] } });
+  mk('#ch-prod', { type: 'bar', data: { labels: d.topProducts.map(p => p.name), datasets: [{ label: 'Продадени бр.', data: d.topProducts.map(p => p.quantity), backgroundColor: '#34d399' }] }, options: { indexAxis: 'y', plugins: { legend: { display: false } } } });
+  mk('#ch-bk', { type: 'bar', data: { labels: d.topBeekeepers.map(p => p.apiaryName), datasets: [{ label: 'Оборот €', data: d.topBeekeepers.map(p => p.revenue), backgroundColor: '#a78bfa' }] }, options: { indexAxis: 'y', plugins: { legend: { display: false } } } });
+}
+
+// ---------------- Наличности ----------------
+async function renderInventory(c) {
+  const low = c.dataset.low === '1';
+  const rows = await api('/admin/inventory' + (low ? '?lowOnly=true' : ''));
+  c.innerHTML = `<div class="row"><label><input type="checkbox" id="inv-low" ${low ? 'checked' : ''}> Само с малка наличност (≤ 10)</label></div>` +
+    table(['Продукт','Опаковка','Пчелин','Наличност',''], rows.map(i => `<tr><td>${esc(i.productName)}</td><td>${esc(i.label)}</td><td>${esc(i.apiaryName)}</td>
+      <td><input type="number" min="0" style="width:90px" value="${i.stockQuantity}" data-qty="${i.variantId}"> ${i.stockQuantity === 0 ? '<span class="badge low">изчерпано</span>' : i.isLow ? '<span class="badge low">малко</span>' : ''}</td>
+      <td><button data-save="${i.variantId}">Запази</button></td></tr>`));
+  $('#inv-low').onchange = e => { c.dataset.low = e.target.checked ? '1' : ''; load(); };
+  c.querySelectorAll('[data-save]').forEach(b => b.onclick = () => act(() => api(`/admin/inventory/${b.dataset.save}`, {method:'PUT', body: JSON.stringify({stockQuantity: +c.querySelector(`[data-qty="${b.dataset.save}"]`).value})}), 'Наличността е обновена.'));
+}
+
+// ---------------- Поръчки ----------------
+async function renderOrders(c) {
+  const s = ordersState, size = 20;
+  const qs = new URLSearchParams({ page: s.page, pageSize: size }); ['status','search','from','to'].forEach(k => s[k] && qs.set(k, s[k]));
+  const { data: rows, total } = await api('/admin/orders?' + qs, { meta: true });
+  const exportQs = new URLSearchParams(); ['status','search','from','to'].forEach(k => s[k] && exportQs.set(k, s[k]));
+  c.innerHTML = `<div class="row">
+      <select id="of-status"><option value="">Всички статуси</option>${STATUSES.map(x => `<option ${s.status === x ? 'selected' : ''}>${x}</option>`).join('')}</select>
+      <input id="of-search" placeholder="Номер, име, телефон…" value="${esc(s.search)}">
+      <input id="of-from" type="date" value="${esc(s.from)}" title="От"><input id="of-to" type="date" value="${esc(s.to)}" title="До">
+      <button class="primary" id="of-go">Филтрирай</button>
+      <a href="/api/admin/orders/export?${exportQs}" download><button type="button">⬇ Експорт CSV (Excel)</button></a>
+      <button id="of-labels" type="button">🖨 Товарителници за избраните</button></div>` +
+    table(['<input type="checkbox" id="of-all">','№','Дата','Клиент','Доставка','Артикули','Сума','Плащане','Статус'], rows.map(o => `<tr><td><input type="checkbox" data-pick="${o.id}"></td><td>${esc(o.orderNumber)}${o.isGift ? ' 🎁' : ''}</td><td>${fmtDate(o.createdAt)}</td>
+      <td>${esc(o.customerName)}<br><small>${esc(o.customerPhone)} ${esc(o.customerEmail)}</small></td>
+      <td>${esc(o.deliveryCity)}<br><small>${esc(o.deliveryAddress)}</small><br><small>${esc(o.courier)} · ${esc(o.deliveryType)}</small></td>
+      <td>${o.items.map(i => `${i.quantity}× ${esc(i.productName)} <small>(${esc(i.weight)})</small>`).join('<br>')}${o.giftMessage ? `<br><small>🎁 ${esc(o.giftMessage)}</small>` : ''}</td>
+      <td><b>${eur(o.totalAmount)}</b><br><small>${o.promoCode ? 'код ' + esc(o.promoCode) + ' −' + eur(o.discountAmount) : ''}</small></td>
+      <td>${esc(o.paymentMethod)}<br><span class="badge ${o.paymentStatus === 'Платена' ? 'good' : ''}">${esc(o.paymentStatus)}</span></td>
+      <td><select data-status="${o.id}" ${o.status === 'Отказана' ? 'disabled title="Отказаната поръчка не може да се променя"' : ''}>${STATUSES.map(x => `<option ${x === o.status ? 'selected' : ''}>${x}</option>`).join('')}</select><br><small>${o.status === 'Отказана' ? '✕ Отказана' : 'Фаза ' + (Math.max(0, STATUSES.indexOf(o.status)) + 1) + ' от 4'}${o.events && o.events.length ? ' · ' + fmtDate(o.events[o.events.length - 1].at) : ''}</small></td></tr>`)) +
+    pager(s.page, total, size);
+  const apply = () => { ordersState = { page: 1, status: $('#of-status').value, search: $('#of-search').value.trim(), from: $('#of-from').value, to: $('#of-to').value }; load(); };
+  $('#of-go').onclick = apply; $('#of-search').addEventListener('keydown', e => e.key === 'Enter' && apply());
+  c.querySelectorAll('[data-pg]').forEach(b => b.onclick = () => { ordersState.page = +b.dataset.pg; load(); });
+  $('#of-all').onchange = e => c.querySelectorAll('[data-pick]').forEach(x => x.checked = e.target.checked);
+  $('#of-labels').onclick = () => { const ids = [...c.querySelectorAll('[data-pick]:checked')].map(x => x.dataset.pick); if (!ids.length) return say('Изберете поне една поръчка.', 'err'); window.open('/api/admin/orders/labels?ids=' + ids.join(','), '_blank'); };
+  c.querySelectorAll('[data-status]').forEach(sel => sel.onchange = () => {
+    if (sel.value === 'Отказана' && !confirm('Отказаната поръчка е окончателна: количествата се връщат в наличност и статусът не може да се променя. Продължавате ли?')) return load();
+    act(() => api(`/admin/orders/${sel.dataset.status}/status`, {method:'PUT', body: JSON.stringify({status: sel.value})}), 'Статусът е обновен.');
+  });
+}
+
+// ---------------- Пчелари ----------------
+let editingBeekeeperId = null, regionsCache = [];
+async function renderBeekeepers(c) {
+  const [rows, regions] = await Promise.all([api('/admin/beekeepers'), api('/admin/regions')]);
+  window._beekeepers = rows; regionsCache = regions;
+  c.innerHTML = `<p><small>Скритите пчелини и техните продукти не се виждат в сайта и не могат да се поръчват. Изтриване е възможно само при липса на поръчки.</small></p>` +
+    table(['ID','Пчелин / пчелар','БАБХ','Регион','Контакт','Продукти','Видим',''], rows.map(b => `<tr><td>${b.id}</td><td><b>${esc(b.apiaryName)}</b><br><small>${esc(b.fullName)}</small></td><td>${esc(b.registrationNumber)}</td>
+      <td>${esc(b.region)}<br><small>${esc(b.cityOrVillage)}</small></td><td>${esc(b.phone)}<br><small>${esc(b.email) || '<i>няма имейл</i>'}</small></td><td>${b.productCount}</td>
+      <td>${b.isActive ? '<span class="badge good">Да</span>' : '<span class="badge low">Скрит</span>'}</td>
+      <td><button data-edit="${b.id}">Редактирай</button> <button data-toggle="${b.id}">${b.isActive ? 'Скрий' : 'Покажи'}</button>
+        <button data-link="${b.id}" title="Свързва пчелина с акаунт по имейл">Свържи акаунт</button> <button class="danger" data-del="${b.id}">Изтрий</button></td></tr>`));
+  c.querySelectorAll('[data-edit]').forEach(x => x.onclick = () => openBeekeeper(window._beekeepers.find(b => b.id == x.dataset.edit)));
+  c.querySelectorAll('[data-toggle]').forEach(x => x.onclick = () => { const b = window._beekeepers.find(v => v.id == x.dataset.toggle);
+    act(() => api(`/admin/beekeepers/${b.id}/${b.isActive ? 'hide' : 'show'}`, {method:'POST'}), b.isActive ? 'Пчелинът е скрит.' : 'Пчелинът е видим.'); });
+  c.querySelectorAll('[data-link]').forEach(x => x.onclick = () => { const email = prompt('Имейл на регистрирания акаунт на пчеларя:'); if (email) act(() => api(`/admin/beekeepers/${x.dataset.link}/link-account`, {method:'POST', body: JSON.stringify({email})}), 'Акаунтът е свързан.'); });
+  c.querySelectorAll('[data-del]').forEach(x => x.onclick = () => confirm('Да се изтрие ли пчелинът заедно с продуктите му? Ако има поръчки, изтриването ще бъде отказано – използвайте „Скрий“.') && act(() => api(`/admin/beekeepers/${x.dataset.del}`, {method:'DELETE'}), 'Пчелинът е изтрит.'));
+}
+function openBeekeeper(b) {
+  editingBeekeeperId = b.id;
+  const f = $('#beekeeper-form'); f.reset();
+  $('#bk-region').innerHTML = regionsCache.map(r => `<option ${r.name === b.region ? 'selected' : ''}>${esc(r.name)}</option>`).join('');
+  for (const k of ['fullName','apiaryName','registrationNumber','cityOrVillage','phone','email','bio']) f.elements[k].value = b[k] ?? '';
+  f.elements.hiveCount.value = b.hiveCount; f.elements.experienceYears.value = b.experienceYears;
+  for (const k of ['isVerified','hasHoney','hasPollen','isActive']) f.elements[k].checked = !!b[k];
+  $('#beekeeper-dialog').showModal();
+}
+$('#beekeeper-form').addEventListener('submit', e => {
+  if (e.submitter && e.submitter.value !== 'save') return;
+  const f = e.target.elements;
+  const body = { fullName: f.fullName.value, apiaryName: f.apiaryName.value, registrationNumber: f.registrationNumber.value, region: f.region.value,
+    cityOrVillage: f.cityOrVillage.value, phone: f.phone.value, email: f.email.value || null, bio: f.bio.value, hiveCount: +f.hiveCount.value,
+    experienceYears: +f.experienceYears.value || 0, isVerified: f.isVerified.checked, hasHoney: f.hasHoney.checked, hasPollen: f.hasPollen.checked, isActive: f.isActive.checked };
+  act(() => api(`/admin/beekeepers/${editingBeekeeperId}`, {method:'PUT', body: JSON.stringify(body)}), 'Пчеларят е обновен.');
+});
+
+// ---------------- Региони ----------------
+async function renderRegions(c) {
+  const rows = await api('/admin/regions');
+  c.innerHTML = `<div class="row"><input id="rg-name" placeholder="Име на региона" maxlength="80"><input id="rg-desc" placeholder="Описание" maxlength="300" style="flex:1;min-width:220px"><button class="primary" id="rg-add">Добави</button></div>` +
+    table(['ID','Регион','Описание','Видими пчелини',''], rows.map(r => `<tr><td>${r.id}</td><td>${esc(r.name)}</td><td>${esc(r.description)}</td><td>${r.beekeepersCount}</td>
+      <td><button data-edit="${r.id}">Редактирай</button> <button class="danger" data-del="${r.id}">Изтрий</button></td></tr>`));
+  $('#rg-add').onclick = () => act(() => api('/admin/regions', {method:'POST', body: JSON.stringify({name: $('#rg-name').value, description: $('#rg-desc').value})}), 'Регионът е добавен.');
+  c.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => { const r = rows.find(x => x.id == b.dataset.edit);
+    const name = prompt('Име на региона:', r.name); if (name === null) return; const description = prompt('Описание:', r.description); if (description === null) return;
+    act(() => api(`/admin/regions/${r.id}`, {method:'PUT', body: JSON.stringify({name, description})}), 'Регионът е обновен.'); });
+  c.querySelectorAll('[data-del]').forEach(b => b.onclick = () => confirm('Да се изтрие ли регионът? (Невъзможно, ако има пчелари или заявки.)') && act(() => api(`/admin/regions/${b.dataset.del}`, {method:'DELETE'}), 'Регионът е изтрит.'));
+}
+
+// ---------------- Потребители ----------------
+let usersState = { page: 1, search: '' };
+async function renderUsers(c) {
+  const s = usersState, size = 25;
+  const qs = new URLSearchParams({ page: s.page, pageSize: size }); if (s.search) qs.set('search', s.search);
+  const { data: rows, total } = await api('/admin/users?' + qs, { meta: true });
+  c.innerHTML = `<div class="row"><input id="us-search" placeholder="Имейл, име…" value="${esc(s.search)}"><button class="primary" id="us-go">Търси</button></div>` +
+    table(['Потребител','Роли','Имейл потвърден','Поръчки','Регистриран','Статус',''], rows.map(u => `<tr><td>${esc(u.fullName)}<br><small>${esc(u.email || u.userName)}</small></td><td>${u.roles.map(r => `<span class="badge">${esc(r)}</span>`).join(' ')}</td>
+      <td>${u.emailConfirmed ? 'Да' : 'Не'}</td><td>${u.ordersCount}</td><td>${fmtDate(u.createdAt)}</td><td>${u.isLocked ? '<span class="badge low">Блокиран</span>' : '<span class="badge good">Активен</span>'}</td>
+      <td>${u.roles.includes('Admin') ? '' : (u.isLocked ? `<button class="ok" data-unlock="${u.id}">Отблокирай</button>` : `<button class="danger" data-lock="${u.id}">Блокирай</button>`)}
+        ${u.email ? `<button data-reset="${u.id}" title="Изпраща връзка за нова парола на потребителя">Нова парола</button>` : ''}</td></tr>`)) + pager(s.page, total, size);
+  const apply = () => { usersState = { page: 1, search: $('#us-search').value.trim() }; load(); };
+  $('#us-go').onclick = apply; $('#us-search').addEventListener('keydown', e => e.key === 'Enter' && apply());
+  c.querySelectorAll('[data-pg]').forEach(b => b.onclick = () => { usersState.page = +b.dataset.pg; load(); });
+  c.querySelectorAll('[data-lock]').forEach(b => b.onclick = () => confirm('Да се блокира ли акаунтът? Потребителят няма да може да влиза.') && act(() => api(`/admin/users/${b.dataset.lock}/lock`, {method:'POST'}), 'Акаунтът е блокиран.'));
+  c.querySelectorAll('[data-unlock]').forEach(b => b.onclick = () => act(() => api(`/admin/users/${b.dataset.unlock}/unlock`, {method:'POST'}), 'Акаунтът е отблокиран.'));
+  c.querySelectorAll('[data-reset]').forEach(b => b.onclick = () => act(() => api(`/admin/users/${b.dataset.reset}/send-reset`, {method:'POST'}), 'Изпратено е писмо за нова парола.'));
+}
+
+// ---------------- Съобщения ----------------
+async function renderMessages(c) {
+  const rows = await api('/admin/messages');
+  c.innerHTML = table(['Дата','От','Тема и съобщение','До пчелин','Статус',''], rows.map(m => `<tr><td>${fmtDate(m.createdAt)}</td>
+    <td>${esc(m.name)}<br><small><a href="mailto:${esc(m.email)}">${esc(m.email)}</a> ${esc(m.phone)}</small></td>
+    <td><b>${esc(m.subject)}</b><br><span style="white-space:pre-wrap">${esc(m.message)}</span></td><td>${esc(m.apiaryName) || '—'}</td>
+    <td>${m.isHandled ? '<span class="badge good">Обработено</span>' : '<span class="badge low">Ново</span>'}</td>
+    <td><button data-h="${m.id}" data-v="${m.isHandled ? 0 : 1}">${m.isHandled ? 'Върни като ново' : 'Обработено'}</button> <button class="danger" data-del="${m.id}">Изтрий</button></td></tr>`));
+  c.querySelectorAll('[data-h]').forEach(b => b.onclick = () => act(() => api(`/admin/messages/${b.dataset.h}/handled?value=${b.dataset.v === '1'}`, {method:'POST'}), 'Обновено.'));
+  c.querySelectorAll('[data-del]').forEach(b => b.onclick = () => confirm('Да се изтрие ли съобщението?') && act(() => api(`/admin/messages/${b.dataset.del}`, {method:'DELETE'}), 'Изтрито.'));
+}
+
+// ---------------- Бюлетин ----------------
+async function renderNewsletter(c) {
+  const rows = await api('/admin/newsletter');
+  const active = rows.filter(r => r.isActive).length;
+  c.innerHTML = `<div class="chart-card" style="margin-bottom:16px"><h3>Изпращане на бюлетин до ${active} активни абонати</h3>
+    <div class="grid2"><label class="full">Тема<input id="nl-subject" maxlength="150"></label>
+    <label class="full">Текст (абзаците се разделят с празен ред)<textarea id="nl-body" rows="6" maxlength="8000"></textarea></label></div>
+    <div class="row" style="margin-top:10px"><button class="primary" id="nl-send" ${active ? '' : 'disabled'}>Изпрати</button><small>Всяко писмо съдържа връзка за отписване.</small></div></div>` +
+    table(['Имейл','Записан на','Статус'], rows.map(r => `<tr><td>${esc(r.email)}</td><td>${fmtDate(r.createdAt)}</td><td>${r.isActive ? '<span class="badge good">Активен</span>' : '<span class="badge">Отписан</span>'}</td></tr>`));
+  $('#nl-send').onclick = () => {
+    if (!$('#nl-subject').value.trim() || !$('#nl-body').value.trim()) return say('Попълнете тема и текст.', 'err');
+    if (!confirm(`Да се изпрати ли бюлетинът до ${active} абонати?`)) return;
+    act(async () => { const r = await api('/admin/newsletter/send', {method:'POST', body: JSON.stringify({subject: $('#nl-subject').value, body: $('#nl-body').value})}); say(`Изпратено до ${r.sent} абонати.`, 'good'); }, 'Бюлетинът е изпратен.');
+  };
+}
+
+// ---------------- Журнал ----------------
+async function renderAudit(c) {
+  const s = auditState, size = 50;
+  const qs = new URLSearchParams({ page: s.page, pageSize: size }); if (s.user) qs.set('user', s.user); if (s.search) qs.set('search', s.search);
+  const r = await api('/admin/audit?' + qs);
+  c.innerHTML = `<div class="row"><input id="au-user" placeholder="Потребител" value="${esc(s.user)}"><input id="au-search" placeholder="Действие, път, детайли…" value="${esc(s.search)}"><button class="primary" id="au-go">Търси</button></div>` +
+    table(['Време','Потребител','Действие','Път','Статус','IP','Детайли'], r.items.map(a => `<tr><td>${fmtDate(a.at)}</td><td>${esc(a.userName)}</td><td>${esc(a.method)} ${esc(a.action)}</td><td><small>${esc(a.path)}</small></td>
+      <td><span class="badge ${a.statusCode < 400 ? 'good' : 'low'}">${a.statusCode}</span></td><td><small>${esc(a.ip)}</small></td><td>${esc(a.details)}</td></tr>`)) + pager(s.page, r.total, size);
+  const apply = () => { auditState = { page: 1, user: $('#au-user').value.trim(), search: $('#au-search').value.trim() }; load(); };
+  $('#au-go').onclick = apply; c.querySelectorAll('[data-pg]').forEach(b => b.onclick = () => { auditState.page = +b.dataset.pg; load(); });
+}
+
+// ---------------- Продукти ----------------
 function openProduct(p) {
   editingProductId = p ? p.id : null;
   const f = $('#product-form'); f.reset();
   $('#product-dialog-title').textContent = p ? 'Редакция на продукт' : 'Нов продукт';
   if (p) {
-    for (const k of ['name','type','category','origin','tag','image','harvestDate','purity','color','aroma','crystallization','tastingNotes','description']) f.elements[k].value = p[k] ?? '';
+    for (const k of ['name','type','category','origin','tag','image','harvestDate','purity','color','aroma','crystallization','tastingNotes','description','batchNumber','certificates','labSummary','labReportUrl','contents','nameEn','descriptionEn']) f.elements[k].value = p[k] ?? '';
+    f.elements.harvestYear.value = p.harvestYear ?? '';
     f.elements.beekeeperId.value = p.beekeeper ? p.beekeeper.id : '';
     f.elements.quizTags.value = (p.quizTags || []).join(',');
     f.elements.inStock.checked = p.inStock;
-    f.elements.variants.value = p.variants.map(v => `${v.label} | ${v.weight} | ${v.price}`).join('\n');
+    f.elements.variants.value = p.variants.map(v => `${v.label} | ${v.weight} | ${v.price} | ${v.stock}`).join('\n');
   }
   $('#product-dialog').showModal();
 }
+$('#product-upload').addEventListener('change', async e => {
+  const file = e.target.files[0]; if (!file) return;
+  try { const fd = new FormData(); fd.append('file', file); const r = await api('/uploads', { method: 'POST', body: fd }); $('#product-form').elements.image.value = r.url; say('Снимката е качена.', 'good'); }
+  catch (err) { say(err.message, 'err'); }
+});
 $('#product-form').addEventListener('submit', e => {
   if (e.submitter && e.submitter.value !== 'save') return;
   const f = e.target.elements;
-  const variants = f.variants.value.split('\n').map(l => l.trim()).filter(Boolean).map(l => { const [label, weight, price] = l.split('|').map(s => s.trim()); return { label, weight, price: parseFloat((price || '').replace(',', '.')), inStock: true }; });
+  const variants = f.variants.value.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+    const [label, weight, price, stock] = l.split('|').map(s => s.trim());
+    return { label, weight, price: parseFloat((price || '').replace(',', '.')), inStock: true, stockQuantity: stock === undefined || stock === '' ? null : parseInt(stock, 10) };
+  });
   const body = { beekeeperId: +f.beekeeperId.value, type: f.type.value, name: f.name.value, category: f.category.value, origin: f.origin.value,
     tag: f.tag.value || '100% Натурален', image: f.image.value || './images/acacia.jpg', harvestDate: f.harvestDate.value, purity: f.purity.value, color: f.color.value,
     aroma: f.aroma.value, crystallization: f.crystallization.value, tastingNotes: f.tastingNotes.value, description: f.description.value,
-    quizTags: f.quizTags.value, inStock: f.inStock.checked, variants };
+    quizTags: f.quizTags.value, inStock: f.inStock.checked, variants,
+    batchNumber: f.batchNumber.value, harvestYear: f.harvestYear.value ? +f.harvestYear.value : null, certificates: f.certificates.value,
+    labSummary: f.labSummary.value, labReportUrl: f.labReportUrl.value, contents: f.contents.value, nameEn: f.nameEn.value, descriptionEn: f.descriptionEn.value };
   act(() => editingProductId ? api(`/admin/products/${editingProductId}`, {method:'PUT', body: JSON.stringify(body)}) : api('/admin/products', {method:'POST', body: JSON.stringify(body)}), 'Продуктът е записан.');
+});
+
+// ---------------- Блог ----------------
+function openArticle(a) {
+  editingArticleId = a ? a.id : null;
+  const f = $('#article-form'); f.reset();
+  $('#article-dialog-title').textContent = a ? 'Редакция на статия' : 'Нова статия';
+  if (a) { for (const k of ['title','slug','category','author','coverImage','summary','content']) f.elements[k].value = a[k] ?? ''; f.elements.isPublished.checked = a.isPublished; }
+  $('#article-dialog').showModal();
+}
+$('#article-form').addEventListener('submit', e => {
+  if (e.submitter && e.submitter.value !== 'save') return;
+  const f = e.target.elements;
+  const body = { title: f.title.value, slug: f.slug.value || null, category: f.category.value, author: f.author.value, coverImage: f.coverImage.value, summary: f.summary.value, content: f.content.value, isPublished: f.isPublished.checked };
+  act(() => editingArticleId ? api(`/admin/articles/${editingArticleId}`, {method:'PUT', body: JSON.stringify(body)}) : api('/admin/articles', {method:'POST', body: JSON.stringify(body)}), 'Статията е записана.');
 });
 
 (async () => { try { await api('/auth/me'); showApp(); } catch { showLogin(); } })();

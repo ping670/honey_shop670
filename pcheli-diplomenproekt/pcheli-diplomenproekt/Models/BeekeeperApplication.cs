@@ -54,4 +54,8 @@ public class BeekeeperApplication
     public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;
 
     public DateTime? ReviewedAt { get; set; }
+
+    /// <summary>Ако кандидатът е влязъл в акаунта си, при одобрение той получава роля Beekeeper и достъп до панела.</summary>
+    [MaxLength(450)]
+    public string? UserId { get; set; }
 }

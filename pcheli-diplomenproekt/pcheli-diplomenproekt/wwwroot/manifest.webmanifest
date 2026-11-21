@@ -1,0 +1,23 @@
+{
+  "name": "Пчелари България",
+  "short_name": "Пчелари",
+  "description": "Национална платформа за чист български мед и пчелен прашец директно от пчеларите.",
+  "lang": "bg",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#140a05",
+  "theme_color": "#140a05",
+  "categories": ["shopping", "food"],
+  "icons": [
+    { "src": "/images/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/images/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/images/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Каталог", "url": "/#products" },
+    { "name": "Проследи поръчка", "url": "/#track" },
+    { "name": "Моят профил", "url": "/account.html" }
+  ]
+}

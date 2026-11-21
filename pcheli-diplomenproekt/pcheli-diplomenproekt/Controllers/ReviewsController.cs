@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using pcheli_diplomenproekt.Dtos;
 using pcheli_diplomenproekt.Services;
 
@@ -15,8 +16,10 @@ public class ReviewsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetApproved() => Ok(await _reviews.GetApprovedAsync());
 
-    // POST: api/reviews – новият отзив чака модерация
+    // POST: api/reviews – новият отзив чака модерация (ограничение по IP + проверка „не съм робот“)
     [HttpPost]
+    [EnableRateLimiting("forms")]
+    [RequireCaptcha]
     public async Task<IActionResult> Create([FromBody] CreateReviewDto dto)
     {
         await _reviews.CreateAsync(dto);
